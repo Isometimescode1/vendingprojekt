@@ -47,8 +47,6 @@ def get_question(age_group):
 
 #get_question(2)
 
-
-
 #print(excel_data.shape)
 
 #print(excel_data)
