@@ -11,10 +11,13 @@ Group3_data = pandas.read_excel (excel_file_name, excel_sheet_group3)
 
 #ühte konkreetset küsimust kirjeldav class
 class Question:
-    def __init__(self, text, age_group, answer):
+    def __init__(self, text, answer, false1, false2, false3, age_group):
         self.text = text
-        self.age_group=age_group
-        self.answer=answer
+        self.answer = answer
+        self.false1 = false1
+        self.false1 = false2
+        self.false1 = false3
+        self.age_group = age_group
 
 #küsimuste faili kirjeldav class        
 class Question_file:
@@ -29,16 +32,16 @@ def get_question(age_group):
         case 1:
             q_max=Group1_data.shape[0]-1
             i=random.randint(0,q_max)
-            kysimus = Question(Group1_data.at[i,'Küssa'],Group1_data.at[i,'Vanusegrupp'],Group1_data.at[i,'Vastus'])
+            kysimus = Question(Group1_data.at[i,'Küssa'],Group1_data.at[i,'Vastus'],Group1_data.at[i,'Valik1'], Group1_data.at[i,'Valik2'], Group1_data.at[i,'Valik3'], Group1_data.at[i,'Vanusegrupp'])
         case 2:
             q_max=Group2_data.shape[0]-1
             i=random.randint(0,q_max)
             #print(i)
-            kysimus = Question(Group2_data.at[i,'Küssa'],Group2_data.at[i,'Vanusegrupp'],Group2_data.at[i,'Vastus'])
+            kysimus = Question(Group2_data.at[i,'Küssa'],Group2_data.at[i,'Vastus'],Group2_data.at[i,'Valik1'], Group2_data.at[i,'Valik2'], Group2_data.at[i,'Valik3'], Group2_data.at[i,'Vanusegrupp'])
         case 3:
             q_max=Group3_data.shape[0]-1
             i=random.randint(0,q_max)
-            kysimus = Question(Group3_data.at[i,'Küssa'],Group3_data.at[i,'Vanusegrupp'],Group3_data.at[i,'Vastus'])
+            kysimus = Question(Group3_data.at[i,'Küssa'],Group3_data.at[i,'Vastus'],Group3_data.at[i,'Valik1'], Group3_data.at[i,'Valik2'], Group3_data.at[i,'Valik3'], Group3_data.at[i,'Vanusegrupp'])
         case _:
             print("Terror: vanusegrupp valimata")
 
@@ -47,7 +50,7 @@ def get_question(age_group):
 
 #get_question(2)
 
-#print(excel_data.shape)
+#print(Group2_data.shape)
 
 #print(excel_data)
 
