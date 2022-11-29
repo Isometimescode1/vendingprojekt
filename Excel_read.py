@@ -15,8 +15,8 @@ class Question:
         self.text = text
         self.answer = answer
         self.false1 = false1
-        self.false1 = false2
-        self.false1 = false3
+        self.false2 = false2
+        self.false3 = false3
         self.age_group = age_group
 
 #küsimuste faili kirjeldav class        
