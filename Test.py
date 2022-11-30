@@ -4,8 +4,7 @@ from guizero import App, PushButton, Text, TextBox, Combo, Window
 import Excel_read as Excel
 import os
 from os import system, name
-secret_word= "python"
-counter=0
+
 
 #sisaldab käesoleva mälumänguga seotud infot
 class Game:
@@ -56,6 +55,11 @@ def läks():
     nooruk.show()
     keskealine.show()
     vanur.show()
+
+def kontrolli_vastust():
+    vastus=Excel.get_answer
+    print(vastus.text)
+    return vastus
 
 #1 leht - ava
 def open_window():
@@ -111,10 +115,10 @@ nooruk =        PushButton(windowage, command = destroy_vanus, args = [1], width
 keskealine =    PushButton(windowage, command = destroy_vanus, args = [2], width = 30, height = 10, text ="13-18", visible=0)
 vanur =         PushButton(windowage, command = destroy_vanus, args = [3], width = 30, height = 10, text =">=19", visible=0)
 
-v1 =            PushButton(window1, width = 30, height = 10, visible=0)
-v2 =            PushButton(window1, width = 30, height = 10, visible=0)
-v3 =            PushButton(window1, width = 30, height = 10, visible=0)
-v4 =            PushButton(window1, width = 30, height = 10, visible=0)
+v1 =            PushButton(window1, command = kontrolli_vastust, width = 30, height = 10, visible=0)
+v2 =            PushButton(window1, command = kontrolli_vastust, width = 30, height = 10, visible=0)
+v3 =            PushButton(window1, command = kontrolli_vastust, width = 30, height = 10, visible=0)
+v4 =            PushButton(window1, command = kontrolli_vastust, width = 30, height = 10, visible=0)
 
 #open_button = PushButton(app, text="Ava leht 1", command=open_window)
 close_button = PushButton(app, text="Sulge leht 1", command=close_window)
@@ -123,7 +127,7 @@ close_button = PushButton(windowage, text="Sulge leht 2", command=close_windowag
 open_button = PushButton(window1, text="Ava leht 3", command=open_window1)
 close_button = PushButton(window1, text="Sulge leht 3", command=close_window1)
 open_button = PushButton(window2, text="Ava leht 4", command=open_window2)
-close_button = PushButton(window2, text="Sulge leht 4", command=open_window)
+close_button = PushButton(window2, text="Sulge leht 4", command=läks)
 
 #open_button = PushButton(window2, text="Kas tahad uuesti mängida?", command=open_window)
 
@@ -140,10 +144,3 @@ window1.set_full_screen()
 window2.set_full_screen()
 app.display()
 
-while True:
-    word = input("Enter the secret word: ").lower()
-    counter = counter + 1
-    if word == secret_word:
-        break
-    if word != secret_word and counter > 7:
-        break
