@@ -1,6 +1,7 @@
 import pandas
 import random
 
+
 excel_file_name = 'Küsimused.xlsx'
 excel_sheet_group1 = 'Grupp_1'
 excel_sheet_group2 = 'Grupp_2'
