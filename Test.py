@@ -23,7 +23,6 @@ def destroy_vanus(vanus):
     close_windowage()
     open_window1()
     start()
-
 #alustab mängu, vaja palju asju juurde lisada
 def start():
         question_picture.hide()
@@ -74,7 +73,10 @@ def kontrolli_vastust(vastus):
         vale_vastus
     print(v1.text)
 
-
+def puhasta():
+    disp_küsimus.clear()
+    start()
+    
 #funktsioonid mis sulgevad ja avavad lehti:
 
 #1 leht - ava
@@ -162,8 +164,8 @@ v4 =            PushButton(window1, command = kontrolli_vastust, args = [4], wid
 close_button1 = PushButton(app, text="Sulge leht 1", command=close_windows)
 close_button2 = PushButton(windowage, text="Sulge leht 2", command=close_windows)
 close_button3 = PushButton(window1, text="Sulge leht 3", command=close_windows)
-close_button4 = PushButton(window2, text="Mängi uuesti", command=läks)
-close_button5 = PushButton(window3, text="Mängi uuesti", command=läks)
+close_button4 = PushButton(window2, text="Mängi uuesti", command=puhasta)
+close_button5 = PushButton(window3, text="Mängi uuesti", command=puhasta)
 close_button6 = PushButton(window2, text="Sulge mäng", command=close_windows)
 close_button7 = PushButton(window3, text="Sulge mäng", command=close_windows)
 
