@@ -1,9 +1,5 @@
-import random
-import time
-from guizero import App, PushButton, Text, TextBox, Combo, Window
+from guizero import App, PushButton, Text, Window, Picture
 import Excel_read as Excel
-import os
-from os import system, name
 
 
 #sisaldab käesoleva mälumänguga seotud infot
@@ -30,6 +26,7 @@ def destroy_vanus(vanus):
 
 #alustab mängu, vaja palju asju juurde lisada
 def start():
+        question_picture.hide()
         rida = too_küsimus(mäng.vanus)
         disp_küsimus.show()
         disp_küsimus.append(rida.text)
@@ -38,6 +35,18 @@ def start():
         v2.text = rida.false1
         v3.text = rida.false2
         v4.text = rida.false3
+
+        # kui küsimusega on ette nähtud kaasnema pilt, siis kuvab selle (question_picture)
+        if rida.image == 1:
+            print("Küsimusega kaasnev pilt tuvastatud")
+            path = "images/" + str(rida.age_group) + "_" + str(rida.nr) + ".jpg"
+            question_picture.image = path
+            question_picture.show()
+        else:
+            print("Küsimusega ei kaasne pilti")
+            question_picture.hide()
+
+            
     
 #hangib küsimuse question class-ina.
 def too_küsimus(vanus):
@@ -50,6 +59,7 @@ def läks():
     close_window()
     open_windowage()
     alustusnupp.hide()
+    splash_picture.hide()
     nooruk.show()
     keskealine.show()
     vanur.show()
@@ -137,7 +147,7 @@ window3 = Window (app, title="Lõpuleht", layout="auto", bg = "#7B4E4E")
 
 alustusnupp =   PushButton(app, command = läks, width = 20, height = 5, align = "bottom", text ="Vajuta, et alustada")
 alustusnupp.text_size = 30
-nooruk =        PushButton(windowage, command = destroy_vanus, args = [1], width = 10, align= "bottom", height = 2, text ="<12", visible=0)
+nooruk =        PushButton(windowage, command = destroy_vanus, args = [1], width = 10, align= "bottom", height = 2, text ="<=12", visible=0)
 nooruk.text_size = 30
 keskealine =    PushButton(windowage, command = destroy_vanus, args = [2], width = 10, align= "bottom", height = 2, text ="13-18", visible=0)
 keskealine.text_size = 30
@@ -159,11 +169,16 @@ close_button7 = PushButton(window3, text="Sulge mäng", command=close_windows)
 
 #text widgets
 
-disp_küsimus = Text(window1, size=20, font="Didot", color="black", visible = 0)
-tere_tulemast = Text(app, text="Tere tulemast mängu!", size=60, align = "top", font="Didot", color="black")
-tekst_1 =       Text(windowage, text="Vali oma vanus ja genereeri küsimus:", align = "top", size=60, font="Didot", color="black")
-õige_vastus = Text (window2, text="Õige vastus, võta auhind!!", size=60, align = "top", font="Didot", color="black")
-vale_vastus = Text (window3, text="Vale vastus, võta auhind!", size=60, align = "top", font="Didot", color="black")
+disp_küsimus    = Text(window1, size=20, font="Didot", color="black", visible = 0)
+tere_tulemast   = Text(app, text="Tere tulemast mängu!", size=60, align = "top", font="Didot", color="black")
+tekst_1         = Text(windowage, text="Vali oma vanus ja genereeri küsimus:", align = "top", size=60, font="Didot", color="black")
+õige_vastus     = Text (window2, text="Õige vastus, võta auhind!!", size=60, align = "top", font="Didot", color="black")
+vale_vastus     = Text (window3, text="Vale vastus, mine minema!!", size=60, align = "top", font="Didot", color="black")
+
+#Picture widgets
+
+splash_picture = Picture(app, image = "images/splash.jpg")
+question_picture = Picture(window1, image ="images/placeholder.jpg")
 
 #paneb lehed täisekraanile ja displayb esimese lehe
 app.set_full_screen()
