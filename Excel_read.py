@@ -1,5 +1,6 @@
 import pandas
 import random
+import PIL
 
 
 excel_file_name = 'Küsimused.xlsx'
@@ -51,12 +52,19 @@ def get_question(age_group):
     return kysimus
 
 
-proov=get_question(2)
-attrs = vars(proov)
-print(', '.join("%s: %s" % item for item in attrs.items()))
+#proov=get_question(2)
+#attrs = vars(proov)
+#print(', '.join("%s: %s" % item for item in attrs.items()))
 
 #print(Group2_data.shape)
 
 #print(excel_data)
 
 #print(Group2_data.at[0,'Küssa'])
+
+#piltidega maadlemine:
+def get_reso(path):
+    img = PIL.Image.open(path)
+    # fetching the dimensions
+    wid, hgt = img.size
+    return[str(wid), str(hgt)]
