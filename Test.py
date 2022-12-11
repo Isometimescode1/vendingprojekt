@@ -2,8 +2,15 @@ from guizero import App, PushButton, Text, Window, Picture, Box
 import Excel_read as Excel
 from tkinter import Message
 import random
+import pygame
+import pygame.freetype
+import sys
+import os
 
-
+#score
+skoor_count = 0
+skoor_õigeid = 0
+skoor_valesid = 0
 #sisaldab käesoleva mälumänguga seotud infot
 class Game:
     def __init__(self, age_group):
@@ -77,16 +84,40 @@ def läks():
 
 #funktsioon kontrollib vastust ja avab vastava lehe
 def kontrolli_vastust(vastus):
-    if vastus == mäng.õige_nupp:
-        open_window2()
-        õige_vastus
+    global skoor_count
+    global skoor_õigeid
+    global skoor_valesid
+    global T1,T2,T3,T4,T5,T6
+    if skoor_count == 5:
+        skoor_count = 0
+        skoor_õigeid = 0
+        skoor_valesid = 0
+        [T1,T2,T3,T4,T5,T6].clear()
+        läks()
     else:
-        open_window3()
-        vale_vastus
-    print(v1.text)
-
+        if vastus == mäng.õige_nupp:
+            open_window2()
+            skoor_count += 1
+            skoor_õigeid += 1
+            print(skoor_count, skoor_õigeid)
+            T1 = Text(window2, skoor_count, size=60, grid=[0,1], font="Didot", color="black")
+            T2 = Text(window2, skoor_õigeid, size=60, align="right, top", font="Didot", color="black")
+            T3 = Text(window2, skoor_valesid, size=60, align="right, top", font="Didot", color="black")
+            õige_vastus
+            return skoor_count, skoor_õigeid
+        else:
+            open_window3()
+            skoor_count += 1
+            skoor_valesid += 1
+            T4 = Text(window3, skoor_count, size=60, align="right, top", font="Didot", color="black")
+            T5 = Text(window3, skoor_õigeid, size=60, align="right, top", font="Didot", color="black")
+            T6 = Text(window3, skoor_valesid, size=60, align="right, top", font="Didot", color="black")
+            print(skoor_count, skoor_õigeid)
+            vale_vastus
+            print(v1.text)
+            return skoor_count, skoor_valesid
     
-#funktsioonid mis sulgevad ja avavad lehti:
+
 
 #1 leht - ava
 def open_window(): 
@@ -103,10 +134,12 @@ def open_window1():
 #4 leht - ava
 def open_window2():
     window2.show(wait=True)
+    #print(skoor_count, skoor_õigeid, skoor_valesid)
 
 #5 leht - ava
 def open_window3():
     window3.show(wait=True)
+    #print(skoor_count, skoor_õigeid, skoor_valesid)
 
 #1 leht - sulge
 def close_window():
@@ -197,7 +230,12 @@ tekst_1         = Text(windowage, text="Vali oma vanus ja genereeri küsimus:", 
 vale_vastus     = Text(window3, text="Vale vastus, mine minema!!", size=60, align = "top", font="Didot", color="black")
 
 a_vastus        = Text(answer_name_box, text="         A:                   B:                  C:                  D:",size=60, font="Didot", color="#3F3E3E", grid= [0,0])
-
+skoor     = Text(window2, text="Skoor:", size=60, align="left, top", font="Didot", color="black")
+õigeid    = Text(window2, text="Õigeid:", size=60, align="left, top", font="Didot", color="black")
+valesid   = Text(window2, text="Valesid:", size=60, align="left, top", font="Didot", color="black")
+skoor     = Text(window3, text="Skoor:", size=60, align="left, top", font="Didot", color="black")
+õigeid    = Text(window3, text="Õigeid:", size=60, align="left, top", font="Didot", color="black")
+valesid   = Text(window3, text="Valesid:", size=60, align="left, top", font="Didot", color="black")
 #Picture widgets
 
 splash_picture = Picture(app, image = "images/splash.jpg")
