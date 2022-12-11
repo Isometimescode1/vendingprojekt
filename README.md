@@ -1,6 +1,6 @@
 # vendingprojekt
 
-Hetkel kasutada vendingprojekt1228branch branchi
+Hetkel kasutada vendingprojekt1128branch branchi
 
 Excel_read.py - loeb küsimusi ja pilte excelist
 
