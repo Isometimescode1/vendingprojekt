@@ -170,6 +170,7 @@ cb4 = pi.callback(NUPP4, pigpio.FALLING_EDGE, button_press)
 
 #neopixel? ei tea kuidas see GPIO-ga kokku mängib
 #vaja reaalselt kätte saada üks
+#valgustite programm.py sample testimiseks 
 
 # ------------   LEDs endex   ----------------------------------------------------------------------------------------
 

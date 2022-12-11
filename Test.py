@@ -2,12 +2,8 @@ from guizero import App, PushButton, Text, Window, Picture, Box
 import Excel_read as Excel
 from tkinter import Message
 import random
-import pygame
-import pygame.freetype
-import sys
-import os
 
-#score
+#skoori lugemiseks muutujad
 skoor_count = 0
 skoor_õigeid = 0
 skoor_valesid = 0
@@ -31,15 +27,14 @@ def destroy_vanus(vanus):
     #alustab ühe mälumängu, kui mäng.vanus != 0
     mäng.vanus = vanus
     close_windowage()
-    #open_window1()
     start()
 
-#alustab mängu, vaja palju asju juurde lisada
+#alustab mängu
 def start():
         question_picture.hide()
         open_window1()
         rida = too_küsimus(mäng.vanus)
-        disp_küsimus.configure(text=str(rida.text))     #tkinter meetod
+        disp_küsimus.configure(text=str(rida.text)) #tkinter meetod
         v1.show(), v2.show(), v3.show(), v4.show()
         
         #Segab vastused nuppudele suvalisse järjekorda
@@ -65,7 +60,6 @@ def start():
             print("Küsimusega ei kaasne pilti")
             question_picture.hide()
 
-   
 #hangib küsimuse question class-ina.
 def too_küsimus(vanus):
     küs_rida=Excel.get_question(vanus)
@@ -87,36 +81,83 @@ def kontrolli_vastust(vastus):
     global skoor_count
     global skoor_õigeid
     global skoor_valesid
-    global T1,T2,T3,T4,T5,T6
-    if skoor_count == 5:
-        skoor_count = 0
-        skoor_õigeid = 0
-        skoor_valesid = 0
-        [T1,T2,T3,T4,T5,T6].clear()
-        läks()
-    else:
+    global tekst1, tekst2, tekst3, tekstx, teksty, tekstz, tekstyay, tekstnay, tekstn, tekstm, teksto, close_button7
+    if skoor_count < 5:
+        open_window2()
         if vastus == mäng.õige_nupp:
-            open_window2()
             skoor_count += 1
             skoor_õigeid += 1
             print(skoor_count, skoor_õigeid)
-            T1 = Text(window2, skoor_count, size=60, grid=[0,1], font="Didot", color="black")
-            T2 = Text(window2, skoor_õigeid, size=60, align="right, top", font="Didot", color="black")
-            T3 = Text(window2, skoor_valesid, size=60, align="right, top", font="Didot", color="black")
+            tekstx = Text(window2, text="skoor")
+            tekst1 = Text(window2, skoor_count, size=60, align = "top", font="Didot", color="black")
+            tekstz = Text(window2, text="õiged")
+            tekst2 = Text(window2, skoor_õigeid, size=60, align = "top", font="Didot", color="black")
+            teksty = Text(window2, text="valed")
+            tekst3 = Text(window2, skoor_valesid, size=60, align = "top", font="Didot", color="black")
             õige_vastus
-            return skoor_count, skoor_õigeid
+            print(v1.text)
+            return skoor_count, skoor_õigeid, skoor_valesid
         else:
-            open_window3()
             skoor_count += 1
             skoor_valesid += 1
-            T4 = Text(window3, skoor_count, size=60, align="right, top", font="Didot", color="black")
-            T5 = Text(window3, skoor_õigeid, size=60, align="right, top", font="Didot", color="black")
-            T6 = Text(window3, skoor_valesid, size=60, align="right, top", font="Didot", color="black")
             print(skoor_count, skoor_õigeid)
+            tekstx = Text(window2, text="skoor")
+            tekst1 = Text(window2, skoor_count, size=60, align = "top", font="Didot", color="black")
+            teksty = Text(window2, text="õiged")
+            tekst2 = Text(window2, skoor_õigeid, size=60, align = "top", font="Didot", color="black")
+            tekstz = Text(window2, text="valed")
+            tekst3 = Text(window2, skoor_valesid, size=60, align = "top", font="Didot", color="black")
             vale_vastus
             print(v1.text)
-            return skoor_count, skoor_valesid
+            return skoor_count, skoor_õigeid, skoor_valesid
+    elif (skoor_count == 5 and skoor_õigeid > skoor_valesid):
+        open_window2()
+        tekstyay = Text(window2,text="Palju õnne, võta toode")
+        tekstn = Text(window2, skoor_count, size=60, align = "top", font="Didot", color="black")
+        tekstm = Text(window2, skoor_õigeid, size=60, align = "top", font="Didot", color="black")
+        teksto = Text(window2, skoor_valesid, size=60, align = "top", font="Didot", color="black")
+        close_button7 = PushButton(window2, text="Mängi uuesti", command=puhasta2)
+    elif (skoor_count == 5 and skoor_õigeid < skoor_valesid):
+        open_window2()
+        tekstnay = Text(window2,text="Seekord ei saa, proovi uuesti!")
+        tekstn = Text(window2, skoor_count, size=60, align = "top", font="Didot", color="black")
+        tekstm = Text(window2, skoor_õigeid, size=60, align = "top", font="Didot", color="black")
+        teksto = Text(window2, skoor_valesid, size=60, align = "top", font="Didot", color="black")
+        close_button7 = PushButton(window2, text="Mängi uuesti", command=puhasta3)
+    else:
+        skoor_count = 0
+        skoor_õigeid = 0
+        skoor_valesid = 0
+        [tekst1,tekst2,tekst3].clear()
+        puhasta2()
+
+def puhasta():
+    #i = 0
+    #i = i + 1
+    #if i < 5:
+     tekst1.destroy()
+     tekst2.destroy()
+     tekst3.destroy()
+     tekstx.destroy()
+     teksty.destroy()
+     tekstz.destroy()
+     start()
+    #elif i == 5:
+     #kontrolli_vastust
+
+def puhasta2():
+    tekstyay.destroy()
+    tekstm.destroy()
+    tekstn.destroy()
+    teksto.destroy()
+    läks()
     
+def puhasta3():
+    tekstnay.destroy()
+    tekstm.destroy()
+    tekstn.destroy()
+    teksto.destroy()
+    läks()
 
 
 #1 leht - ava
@@ -137,8 +178,8 @@ def open_window2():
     #print(skoor_count, skoor_õigeid, skoor_valesid)
 
 #5 leht - ava
-def open_window3():
-    window3.show(wait=True)
+#def open_window3():
+    #window3.show(wait=True)
     #print(skoor_count, skoor_õigeid, skoor_valesid)
 
 #1 leht - sulge
@@ -158,8 +199,8 @@ def close_window2():
     window2.hide()
 
 #5 lisaleht vanuse jaoks
-def close_window3():
-    window3.hide()
+#def close_window3():
+    #window3.hide()
 
 #6 funktsioon mis peidab kõik lehed ja sulgeb programmi
 def close_windows():
@@ -167,7 +208,7 @@ def close_windows():
     windowage.hide()
     window1.hide()
     window2.hide()
-    window3.hide()
+    #window3.hide()
     exit()
 
 #defineeritud erinevad leheküljed
@@ -185,7 +226,7 @@ window1 = Window(app, title="Küsimusteleht", layout="auto", bg = "#7B4E4E")
 window2 = Window(app, title="Lõpuleht", layout="auto", bg = "#7B4E4E")
 
 #viies lehekülg vastasid valesti
-window3 = Window (app, title="Lõpuleht", layout="auto", bg = "#7B4E4E")
+#window3 = Window (app, title="Lõpuleht", layout="auto", bg = "#7B4E4E")
 
 #Boxes
 
@@ -215,10 +256,10 @@ v4.text_size = 30
 close_button1 = PushButton(app, text="Sulge leht 1", command=close_windows)
 close_button2 = PushButton(windowage, text="Sulge leht 2", command=close_windows)
 close_button3 = PushButton(window1, text="Sulge leht 3", command=close_windows)
-close_button4 = PushButton(window2, text="Mängi uuesti", command=start)
-close_button5 = PushButton(window3, text="Mängi uuesti", command=start)
+close_button4 = PushButton(window2, text="Mängi uuesti", command=puhasta)
+#close_button5 = PushButton(window3, text="Mängi uuesti", command=start)
 close_button6 = PushButton(window2, text="Sulge mäng", command=close_windows)
-close_button7 = PushButton(window3, text="Sulge mäng", command=close_windows)
+#close_button7 = PushButton(window3, text="Sulge mäng", command=close_windows)
 
 #text widgets
 
@@ -226,16 +267,13 @@ disp_küsimus    = Message(window1.tk, text="Kui näed seda teksti, anna automaa
 disp_küsimus.pack()
 tere_tulemast   = Text(app, text="Tere tulemast mängu!", size=60, align = "top", font="Didot", color="black")
 tekst_1         = Text(windowage, text="Vali oma vanus ja genereeri küsimus:", align = "top", size=60, font="Didot", color="black")
-õige_vastus     = Text(window2, text="Õige vastus, võta auhind!!", size=60, align = "top", font="Didot", color="black")
-vale_vastus     = Text(window3, text="Vale vastus, mine minema!!", size=60, align = "top", font="Didot", color="black")
+õige_vastus     = Text(window2, text="Õige vastus, võta auhind!!", size=30, align = "top", font="Didot", color="black", visible = 0)
+vale_vastus     = Text(window2, text="Vale vastus, mine minema!!", size=30, align = "top", font="Didot", color="black", visible = 0)
 
 a_vastus        = Text(answer_name_box, text="         A:                   B:                  C:                  D:",size=60, font="Didot", color="#3F3E3E", grid= [0,0])
-skoor     = Text(window2, text="Skoor:", size=60, align="left, top", font="Didot", color="black")
-õigeid    = Text(window2, text="Õigeid:", size=60, align="left, top", font="Didot", color="black")
-valesid   = Text(window2, text="Valesid:", size=60, align="left, top", font="Didot", color="black")
-skoor     = Text(window3, text="Skoor:", size=60, align="left, top", font="Didot", color="black")
-õigeid    = Text(window3, text="Õigeid:", size=60, align="left, top", font="Didot", color="black")
-valesid   = Text(window3, text="Valesid:", size=60, align="left, top", font="Didot", color="black")
+#skoor     = Text(window2, text="Skoor:", size=60, align="top", font="Didot", color="black")
+#õigeid    = Text(window2, text="Õigeid:", size=60, align="top", font="Didot", color="black")
+#valesid   = Text(window2, text="Valesid:", size=60, align="top", font="Didot", color="black")
 #Picture widgets
 
 splash_picture = Picture(app, image = "images/splash.jpg")
@@ -247,6 +285,6 @@ windowage.set_full_screen()
 window1.set_full_screen()
 window1.add_tk_widget(disp_küsimus)
 window2.set_full_screen()
-window3.set_full_screen()
+#window3.set_full_screen()
 #app.add_tk_widget(disp_küsimus)
 app.display()
