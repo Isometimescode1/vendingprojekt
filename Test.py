@@ -50,7 +50,7 @@ def start():
             print("Küsimusega kaasnev pilt tuvastatud")
             path = "images/" + str(rida.age_group) + "_" + str(rida.nr) + ".jpg"
             question_picture.image = path
-            #määrab pildi suuruseks faili resolutsiooni, muidu hakkab pilte moonutama. Suurim lubatud milt 1920 x 600
+            #määrab pildi suuruseks faili resolutsiooni, muidu hakkab pilte moonutama. Suurim lubatud pilt 1920 x 600
             question_picture.width = int(Excel.get_reso(path)[0])
             question_picture.height = int(Excel.get_reso(path)[1])
             question_picture.show()
