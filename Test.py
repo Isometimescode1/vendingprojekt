@@ -2,15 +2,7 @@ from guizero import App, PushButton, Text, Window, Picture, Box
 import Excel_read as Excel
 from tkinter import Message
 import random
-import pygame
-import pygame.freetype
-import sys
-import os
 
-#score
-skoor_count = 0
-skoor_õigeid = 0
-skoor_valesid = 0
 #sisaldab käesoleva mälumänguga seotud infot
 class Game:
     def __init__(self, age_group):
@@ -19,23 +11,17 @@ class Game:
       self.õigeid = 0
       self.valesid = 0
       self.õige_nupp = 0
+      self.mängu_pikkus = 5
+      self.valitud_str = "Error: Koogel moogel!"
+    
+    VALE_VASTUS = "Vale vastus!"
+    ÕIGE_VASTUS = "Õige, tubli laps!"
 
 mäng = Game(0)
 
-#eemaldab vanuse valiku nupud ja alustab mängu
-def destroy_vanus(vanus):
-    #eemaldab vanuse nupud
-    nooruk.hide()
-    keskealine.hide()
-    vanur.hide()
-    #alustab ühe mälumängu, kui mäng.vanus != 0
-    mäng.vanus = vanus
-    close_windowage()
-    #open_window1()
-    start()
-
 #alustab mängu, vaja palju asju juurde lisada
 def start():
+
         question_picture.hide()
         open_window1()
         rida = too_küsimus(mäng.vanus)
@@ -54,7 +40,7 @@ def start():
 
         # kui küsimusega on ette nähtud kaasnema pilt, siis kuvab selle (question_picture)
         if rida.image == 1:
-            print("Küsimusega kaasnev pilt tuvastatud")
+            print("Pilt: Küsimusega kaasnev pilt tuvastatud")
             path = "images/" + str(rida.age_group) + "_" + str(rida.nr) + ".jpg"
             question_picture.image = path
             #määrab pildi suuruseks faili resolutsiooni, muidu hakkab pilte moonutama. Suurim lubatud pilt 1920 x 600
@@ -62,14 +48,14 @@ def start():
             question_picture.height = int(Excel.get_reso(path)[1])
             question_picture.show()
         else:
-            print("Küsimusega ei kaasne pilti")
+            print("Pilt: Küsimusega ei kaasne pilti")
             question_picture.hide()
 
    
 #hangib küsimuse question class-ina.
 def too_küsimus(vanus):
     küs_rida=Excel.get_question(vanus)
-    print(küs_rida.text)
+    print("Küsimus on: ", küs_rida.text)
     return küs_rida
 
 #alustusnuppu vajutades kuvab vanusevaliku
@@ -84,44 +70,66 @@ def läks():
 
 #funktsioon kontrollib vastust ja avab vastava lehe
 def kontrolli_vastust(vastus):
-    global skoor_count
-    global skoor_õigeid
-    global skoor_valesid
-    global T1,T2,T3,T4,T5,T6
-    if skoor_count == 5:
-        skoor_count = 0
-        skoor_õigeid = 0
-        skoor_valesid = 0
-        [T1,T2,T3,T4,T5,T6].clear()
-        läks()
-    else:
-        if vastus == mäng.õige_nupp:
-            open_window2()
-            skoor_count += 1
-            skoor_õigeid += 1
-            print(skoor_count, skoor_õigeid)
-            T1 = Text(window2, skoor_count, size=60, grid=[0,1], font="Didot", color="black")
-            T2 = Text(window2, skoor_õigeid, size=60, align="right, top", font="Didot", color="black")
-            T3 = Text(window2, skoor_valesid, size=60, align="right, top", font="Didot", color="black")
-            õige_vastus
-            return skoor_count, skoor_õigeid
-        else:
-            open_window3()
-            skoor_count += 1
-            skoor_valesid += 1
-            T4 = Text(window3, skoor_count, size=60, align="right, top", font="Didot", color="black")
-            T5 = Text(window3, skoor_õigeid, size=60, align="right, top", font="Didot", color="black")
-            T6 = Text(window3, skoor_valesid, size=60, align="right, top", font="Didot", color="black")
-            print(skoor_count, skoor_õigeid)
-            vale_vastus
-            print(v1.text)
-            return skoor_count, skoor_valesid
     
+    #kuvab hariliku uue küsimuse nupu igal korral kui mängu pikkus pole veel teäidetud
+    uus_küsimus_button.show()
+    algusesse_button.hide()
+
+    #puhastb teksti sisu, et saaks kuvada uusi väärtusi
+    vastus_tulemus.clear()
+    skoor_nr_text.clear()
+    valesid_nr_text.clear()
+    õigeid_nr_text.clear()
+
+    if vastus == mäng.õige_nupp:
+        open_window2()
+        vastus_tulemus.append(mäng.ÕIGE_VASTUS)
+        mäng.õigeid += 1
+        
+    else:
+        open_window2()
+        vastus_tulemus.append(mäng.VALE_VASTUS)
+        mäng.valesid += 1
+    
+    # Uuendab kuvatavas tekstis skoori
+    õigeid_nr_text.append(mäng.õigeid)
+    valesid_nr_text.append(mäng.valesid)
+    mäng.skoor += 1
+    skoor_nr_text.append(mäng.skoor)
+
+    #v[vastus].text on valitud vastus, prindib selle silumiseks
+    string = "v" + str(vastus) + ".text"
+    print("Valiti vastus:", eval(string))
+
+    # kui mäng läbi saab kuvab lõpu nupu ja skoori
+    if mäng.skoor >= mäng.mängu_pikkus:
+        #Kuvab reseti alagatava nupu, et mängu uuesti algusest alustada
+        uus_küsimus_button.hide()
+        algusesse_button.show()
+        open_window2()
+        return()
+
+    
+def full_reset():
+    mäng.skoor = 0
+    mäng.õigeid = 0
+    mäng.valesid = 0
+    mäng.vanus = 0
+    open_window()
 
 
+
+# meetodid, mis avavad ja sulgevad soovitud aknaid
 #1 leht - ava
 def open_window(): 
+    close_window1()
+    close_window2()
+    close_window3()
+    splash_picture.show()
+    alustusnupp.show()
+
     app.show()
+    app.focus()
 
 #2 leht - ava
 def open_windowage():
@@ -146,8 +154,10 @@ def close_window():
     app.hide()
 
 #2 lisaleht vanuse jaoks
-def close_windowage():
+def close_windowage(vanus):
     windowage.hide()
+    mäng.vanus = vanus
+    start()
 
 #3 leht - sulge
 def close_window1():
@@ -182,25 +192,37 @@ windowage = Window(app, title="Kirjuta oma vanus", layout="auto", bg = "#7B4E4E"
 window1 = Window(app, title="Küsimusteleht", layout="auto", bg = "#7B4E4E")
 
 #neljas lehekülg vastasid õigesti + kas tahad uuesti mängida
-window2 = Window(app, title="Lõpuleht", layout="auto", bg = "#7B4E4E")
+window2 = Window(app, title="Skoori vaheleht", layout="auto", bg = "#7B4E4E")
 
 #viies lehekülg vastasid valesti
-window3 = Window (app, title="Lõpuleht", layout="auto", bg = "#7B4E4E")
+window3 = Window(app, title="Lõpuleht", layout="auto", bg = "#7B4E4E")
 
 #Boxes
 
-buttons_box = Box(window1, width="fill", align="bottom", border=1, layout="grid")
-answer_name_box = Box(window1, width="fill", align="bottom", border=1, layout="grid")
+buttons_box =           Box(window1, width="fill", align="bottom", border=1, layout="grid")
+answer_name_box =       Box(window1, width="fill", align="bottom", border=1, layout="grid")
+spacer_box1 =           Box(windowage, width ="fill", height=300, align="bottom", border=0)
+age_selection_box =     Box(windowage, width="fill", height=300, align="bottom", border=0, layout="grid")
+age_spacer_box =        Box(age_selection_box, width=250, grid=[0,0], border=0) #vanuse valiku nuppude tsentrisse paigutamise jaoks
+age_description_box =   Box(windowage, width="fill", height=100, align="bottom", border=0)
+
+spacer_box2 =           Box(window2, width = 1000, height=200, align="bottom", border=0)
+skoor_üldine_box =      Box(window2, width = "fill", height = 600, align="bottom", border=0)
+skoor_spacer_box =      Box(skoor_üldine_box, width = 200, height = "fill", align="left", border=0)
+valesid_box =           Box(skoor_üldine_box, width = 1000, height=200, align="bottom", border=0, layout="grid")
+õigeid_box =            Box(skoor_üldine_box, width = 1000, height=200, align="bottom", border=0, layout="grid")
+skoor_box =             Box(skoor_üldine_box, width = 1000, height=200, align="bottom", border=0, layout="grid")
+
 
 #PushButton widgets
 
 alustusnupp =   PushButton(app, command = läks, width = 20, height = 5, align = "bottom", text ="Vajuta, et alustada")
 alustusnupp.text_size = 30
-nooruk =        PushButton(windowage, command = destroy_vanus, args = [1], width = 10, align= "bottom", height = 2, text ="<=12", visible=0)
+nooruk =        PushButton(age_selection_box, command = close_windowage, args = [1], width = 20, align= "left", height = 3, text ="<=12", visible=0, grid= [1,0])
 nooruk.text_size = 30
-keskealine =    PushButton(windowage, command = destroy_vanus, args = [2], width = 10, align= "bottom", height = 2, text ="13-18", visible=0)
+keskealine =    PushButton(age_selection_box, command = close_windowage, args = [2], width = 20, align= "left", height = 3, text ="13-18", visible=0, grid= [2,0])
 keskealine.text_size = 30
-vanur =         PushButton(windowage, command = destroy_vanus, args = [3], width = 10, align= "bottom", height = 2, text =">=19", visible=0)
+vanur =         PushButton(age_selection_box, command = close_windowage, args = [3], width = 20, align= "left", height = 3, text =">=19", visible=0, grid= [3,0])
 vanur.text_size = 30
 
 v1 =            PushButton(buttons_box, command = kontrolli_vastust, args = [1], width = 20, grid= [0,0], height = 3, visible=0)
@@ -212,30 +234,34 @@ v3.text_size = 30
 v4 =            PushButton(buttons_box, command = kontrolli_vastust, args = [4], width = 20, grid= [3,0], height = 3, visible=0)
 v4.text_size = 30
 
-close_button1 = PushButton(app, text="Sulge leht 1", command=close_windows)
-close_button2 = PushButton(windowage, text="Sulge leht 2", command=close_windows)
-close_button3 = PushButton(window1, text="Sulge leht 3", command=close_windows)
-close_button4 = PushButton(window2, text="Mängi uuesti", command=start)
-close_button5 = PushButton(window3, text="Mängi uuesti", command=start)
+close_button1       = PushButton(app, text="Sulge leht 1", command=close_windows)
+close_button2       = PushButton(windowage, text="Sulge leht 2", command=close_windows)
+close_button3       = PushButton(window1, text="Sulge leht 3", command=close_windows)
+uus_küsimus_button  = PushButton(window2, text="Järgmine küsimus, palun", command=start)
+algusesse_button    = PushButton(window2, text="Tagasi algusesse", command=full_reset, visible=0)
+#close_button5 = PushButton(window3, text="Tagasi algusesse", command=full_reset)
 close_button6 = PushButton(window2, text="Sulge mäng", command=close_windows)
-close_button7 = PushButton(window3, text="Sulge mäng", command=close_windows)
+#close_button7 = PushButton(window3, text="Sulge mäng", command=close_windows)
 
 #text widgets
 
 disp_küsimus    = Message(window1.tk, text="Kui näed seda teksti, anna automaadi kantseldajale teada.", font=("Didot", 30), width=1600)
 disp_küsimus.pack()
-tere_tulemast   = Text(app, text="Tere tulemast mängu!", size=60, align = "top", font="Didot", color="black")
-tekst_1         = Text(windowage, text="Vali oma vanus ja genereeri küsimus:", align = "top", size=60, font="Didot", color="black")
-õige_vastus     = Text(window2, text="Õige vastus, võta auhind!!", size=60, align = "top", font="Didot", color="black")
-vale_vastus     = Text(window3, text="Vale vastus, mine minema!!", size=60, align = "top", font="Didot", color="black")
+tere_tulemast   = Text(app, text="Tere tulemast unikaalse müügiautomaadi juurde!", size=60, align = "top", font="Didot", color="black")
+tekst_1         = Text(windowage, text="Vali sobiv vanusegrupp:", align = "top", size=60, font="Didot", color="black")
+tekst_vanus_selgitus = Text(windowage, text="Kusimused on jaotatud vanuste alusel, et anda kõigile võrdne võimalus ;)", align = "top", size=30, font="Didot", color="black")
+age_description_text = Text(age_description_box, text="                                   Olen nooruk!                Keskiga juba käes!              Vanaks jäänud...", align = "left", size=30, font="Didot", color="black")
+vastus_tulemus       = Text(window2, text="Initilize", size=60, align = "top", font="Didot", color="black")
 
 a_vastus        = Text(answer_name_box, text="         A:                   B:                  C:                  D:",size=60, font="Didot", color="#3F3E3E", grid= [0,0])
-skoor     = Text(window2, text="Skoor:", size=60, align="left, top", font="Didot", color="black")
-õigeid    = Text(window2, text="Õigeid:", size=60, align="left, top", font="Didot", color="black")
-valesid   = Text(window2, text="Valesid:", size=60, align="left, top", font="Didot", color="black")
-skoor     = Text(window3, text="Skoor:", size=60, align="left, top", font="Didot", color="black")
-õigeid    = Text(window3, text="Õigeid:", size=60, align="left, top", font="Didot", color="black")
-valesid   = Text(window3, text="Valesid:", size=60, align="left, top", font="Didot", color="black")
+
+skoor_text      = Text(skoor_box, text="Küsimusi:", size=60, align="bottom", font="Didot", color="black", grid= [1,0])
+õigeid_text     = Text(õigeid_box, text="Õigeid vastuseid:", size=60, align="bottom", font="Didot", color="black", grid= [1,0])
+valesid_text    = Text(valesid_box, text="Valesid vastuseid:", size=60, align="bottom", font="Didot", color="black", grid= [1,0])
+skoor_nr_text   = Text(skoor_box, text=mäng.skoor, size=60, align="bottom", font="Didot", color="black", grid= [2,0])
+õigeid_nr_text  = Text(õigeid_box, text=mäng.õigeid, size=60, align="bottom", font="Didot", color="black", grid= [2,0])
+valesid_nr_text = Text(valesid_box, text=mäng.valesid, size=60, align="bottom", font="Didot", color="black", grid= [2,0])
+
 #Picture widgets
 
 splash_picture = Picture(app, image = "images/splash.jpg")
