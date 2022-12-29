@@ -20,36 +20,42 @@ class Game:
 mäng = Game(0)
 
 #alustab mängu, vaja palju asju juurde lisada
-def start():
+def start(age=None):
+    
+    if age != None:
+        mäng.vanus = age
 
+    question_picture.hide()
+    open_window1()
+    rida = too_küsimus(mäng.vanus)
+    disp_küsimus.configure(text=str(rida.text))     #tkinter meetod
+    v1.show(), v2.show(), v3.show(), v4.show()
+
+    close_windowage()
+    
+    #Segab vastused nuppudele suvalisse järjekorda
+    answers=[rida.answer, rida.false1, rida.false2, rida.false3]
+    random.shuffle(answers)
+    v1.text = answers[0]
+    v2.text = answers[1]
+    v3.text = answers[2]
+    v4.text = answers[3]
+    #Õige vastuse kontrollimiseks
+    mäng.õige_nupp = answers.index(rida.answer)+1
+
+    # kui küsimusega on ette nähtud kaasnema pilt, siis kuvab selle (question_picture)
+    if rida.image == 1:
+        print("Pilt: Küsimusega kaasnev pilt tuvastatud")
+        path = "/home/pi/vendingprojekt-1/Images/" + str(rida.age_group) + "_" + str(rida.nr) + ".jpg"
+        question_picture.image = path
+        #määrab pildi suuruseks faili resolutsiooni, muidu hakkab pilte moonutama. Suurim lubatud pilt 1920 x 600
+        print(path)
+        #question_picture.width = int(Excel.get_reso(path)[0])
+        #question_picture.height = int(Excel.get_reso(path)[1])
+        question_picture.show()
+    else:
+        print("Pilt: Küsimusega ei kaasne pilti")
         question_picture.hide()
-        open_window1()
-        rida = too_küsimus(mäng.vanus)
-        disp_küsimus.configure(text=str(rida.text))     #tkinter meetod
-        v1.show(), v2.show(), v3.show(), v4.show()
-        
-        #Segab vastused nuppudele suvalisse järjekorda
-        answers=[rida.answer, rida.false1, rida.false2, rida.false3]
-        random.shuffle(answers)
-        v1.text = answers[0]
-        v2.text = answers[1]
-        v3.text = answers[2]
-        v4.text = answers[3]
-        #Õige vastuse kontrollimiseks
-        mäng.õige_nupp = answers.index(rida.answer)+1
-
-        # kui küsimusega on ette nähtud kaasnema pilt, siis kuvab selle (question_picture)
-        if rida.image == 1:
-            print("Pilt: Küsimusega kaasnev pilt tuvastatud")
-            path = "images/" + str(rida.age_group) + "_" + str(rida.nr) + ".jpg"
-            question_picture.image = path
-            #määrab pildi suuruseks faili resolutsiooni, muidu hakkab pilte moonutama. Suurim lubatud pilt 1920 x 600
-            question_picture.width = int(Excel.get_reso(path)[0])
-            question_picture.height = int(Excel.get_reso(path)[1])
-            question_picture.show()
-        else:
-            print("Pilt: Küsimusega ei kaasne pilti")
-            question_picture.hide()
 
    
 #hangib küsimuse question class-ina.
@@ -60,8 +66,8 @@ def too_küsimus(vanus):
 
 #alustusnuppu vajutades kuvab vanusevaliku
 def läks():
+    open_windowage()        #järjekord oluline
     close_window()
-    open_windowage()
     alustusnupp.hide()
     splash_picture.hide()
     nooruk.show()
@@ -129,15 +135,22 @@ def open_window():
     alustusnupp.show()
 
     app.show()
-    app.focus()
+    app.focus()         #.focus() ei funka raspi peal :(
 
 #2 leht - ava
 def open_windowage():
+    close_window1()
+    close_window2()
+    close_window3()
     windowage.show(wait=True)
+    windowage.focus()
 
 #3 leht - ava, toob ühe akna esile ja ei lase teistel ette tulla enne kui esimene sulgetakse 
 def open_window1():
-    window1.show(wait=True)
+    window1.show(wait=True)     #järkekord oluline
+    windowage.hide()
+    close_window2()
+    close_window3()
 
 #4 leht - ava
 def open_window2():
@@ -154,10 +167,10 @@ def close_window():
     app.hide()
 
 #2 lisaleht vanuse jaoks
-def close_windowage(vanus):
+def close_windowage():
     windowage.hide()
-    mäng.vanus = vanus
-    start()
+    #mäng.vanus = vanus
+    #tart()
 
 #3 leht - sulge
 def close_window1():
@@ -171,14 +184,16 @@ def close_window2():
 def close_window3():
     window3.hide()
 
-#6 funktsioon mis peidab kõik lehed ja sulgeb programmi
-def close_windows():
+#6 funktsioon mis peidab kõik lehed ja sulgeb programmi, kui anda mingi parameeter, siis exit-it ei tee
+def close_windows(quit=None):
     app.hide()
     windowage.hide()
     window1.hide()
     window2.hide()
     window3.hide()
-    exit()
+    if quit is None:
+        exit()
+
 
 #defineeritud erinevad leheküljed
 
@@ -196,6 +211,11 @@ window2 = Window(app, title="Skoori vaheleht", layout="auto", bg = "#7B4E4E")
 
 #viies lehekülg vastasid valesti
 window3 = Window(app, title="Lõpuleht", layout="auto", bg = "#7B4E4E")
+
+
+#et avaleht jääks kõige ette
+close_windows(1)
+app.show()
 
 #Boxes
 
@@ -218,11 +238,11 @@ skoor_box =             Box(skoor_üldine_box, width = 1000, height=200, align="
 
 alustusnupp =   PushButton(app, command = läks, width = 20, height = 5, align = "bottom", text ="Vajuta, et alustada")
 alustusnupp.text_size = 30
-nooruk =        PushButton(age_selection_box, command = close_windowage, args = [1], width = 20, align= "left", height = 3, text ="<=12", visible=0, grid= [1,0])
+nooruk =        PushButton(age_selection_box, command = start, args = [1], width = 20, align= "left", height = 3, text ="<=12", visible=0, grid= [1,0])
 nooruk.text_size = 30
-keskealine =    PushButton(age_selection_box, command = close_windowage, args = [2], width = 20, align= "left", height = 3, text ="13-18", visible=0, grid= [2,0])
+keskealine =    PushButton(age_selection_box, command = start, args = [2], width = 20, align= "left", height = 3, text ="13-18", visible=0, grid= [2,0])
 keskealine.text_size = 30
-vanur =         PushButton(age_selection_box, command = close_windowage, args = [3], width = 20, align= "left", height = 3, text =">=19", visible=0, grid= [3,0])
+vanur =         PushButton(age_selection_box, command = start, args = [3], width = 20, align= "left", height = 3, text =">=19", visible=0, grid= [3,0])
 vanur.text_size = 30
 
 v1 =            PushButton(buttons_box, command = kontrolli_vastust, args = [1], width = 20, grid= [0,0], height = 3, visible=0)
@@ -264,8 +284,8 @@ valesid_nr_text = Text(valesid_box, text=mäng.valesid, size=60, align="bottom",
 
 #Picture widgets
 
-splash_picture = Picture(app, image = "images/splash.jpg")
-question_picture = Picture(window1, image ="images/placeholder.jpg")
+splash_picture = Picture(app, image = "Images/splash.jpg")
+question_picture = Picture(window1, image ="Images/placeholder.jpg")
 
 #paneb lehed täisekraanile ja displayb esimese lehe
 app.set_full_screen()

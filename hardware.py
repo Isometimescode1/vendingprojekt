@@ -3,6 +3,11 @@ from time import sleep
 
 # Connect to pigpiod daemon START PIGPIO FROM TERMINAL WITH "sudo pigpiod", will probably cause problems......
 pi = pigpio.pi()
+if pi != 0:
+    print("Pigpio korras: ", pi)
+else:
+    print("Pigpioga on probleeme")
+
 
 # ------------   MOOTOR   ----------------------------------------------------------------------------------------
 # INFO https://www.rototron.info/raspberry-pi-stepper-motor-tutorial/
@@ -129,6 +134,7 @@ NUPP1 = 17
 NUPP2 = 27
 NUPP3 = 22
 NUPP4 = 5
+QUALIFIER_TIME = 50000  #microseconds
 
 #dictionary to return NUPP nr instead of gpio nr
 dix = {
@@ -143,6 +149,11 @@ pi.set_mode(NUPP1, pigpio.INPUT)
 pi.set_mode(NUPP2, pigpio.INPUT)
 pi.set_mode(NUPP3, pigpio.INPUT)
 pi.set_mode(NUPP4, pigpio.INPUT)
+#software debouncing
+pi.set_glitch_filter(NUPP1, QUALIFIER_TIME)
+pi.set_glitch_filter(NUPP2, QUALIFIER_TIME)
+pi.set_glitch_filter(NUPP3, QUALIFIER_TIME)
+pi.set_glitch_filter(NUPP4, QUALIFIER_TIME)
 
 #holds the value of the most recently pressed button
 pressed = 0

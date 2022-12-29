@@ -52,9 +52,9 @@ def get_question(age_group):
     return kysimus
 
 
-#proov=get_question(2)
-#attrs = vars(proov)
-#print(', '.join("%s: %s" % item for item in attrs.items()))
+proov=get_question(2)
+attrs = vars(proov)
+print(', '.join("%s: %s" % item for item in attrs.items()))
 
 #print(Group2_data.shape)
 
@@ -68,3 +68,5 @@ def get_reso(path):
     # fetching the dimensions
     wid, hgt = img.size
     return[str(wid), str(hgt)]
+
+get_reso("/home/pi/vendingprojekt-1/Images/splash.jpg")
