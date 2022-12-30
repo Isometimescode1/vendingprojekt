@@ -32,10 +32,16 @@ pi.set_mode(STEP, pigpio.OUTPUT)
 pi.set_mode(ENABLE, pigpio.OUTPUT)
 
 # To enable the main motor externally:
-def motor_enable(state):
-    #GPIO low = motor NOT enabled vaja kontrollida siiski...
-    #GPIO high = motor enabled
+def motor_disable(state):
+    #low = motor enabled
+    #high = motor disabled
     pi.write(ENABLE, state)
+
+# direction change
+def motor_direction(dir):
+    #high = vastupäeva (hammaka poolt vaadates)
+    #low = päripäeva (hammaka poolt vaadates)
+    pi.write(DIR, dir)
 
 # Acceleration ramping generation method
 def generate_ramp(ramp):
@@ -68,11 +74,11 @@ def generate_ramp(ramp):
 
 # Ramp (freq(Hz), nr of steps)       #RPM = MICROSTEPS / freq * 60   #omega = RPM * 0.10472
 # Näidis üles ja alla ramp: Kindlati vaja timmida, kestvus: 3.94 s
-generate_ramp([ [60, 32],             
-	            [80, 64],
-	            [100, 64],
-	            [80, 64],
-	            [60, 32]])
+#generate_ramp([ [60, 32],             
+#	            [80, 64],
+#	            [100, 64],
+#	            [80, 64],
+#	            [60, 32]])
 
 
 # ------------   MOOTOR endex  ----------------------------------------------------------------------------------------
@@ -117,9 +123,21 @@ def actuate_retract():
 
 # ------------   OHUTUSLÜLITI   ----------------------------------------------------------------------------------------
 SAFETY = 19     # Safety switch on the fill up hatch
+QUALIFIER_TIME = 50000  #microseconds
+
 
 # Set up pins as an input
 pi.set_mode(SAFETY, pigpio.INPUT)
+#debouncing
+pi.set_glitch_filter(SAFETY, QUALIFIER_TIME)
+
+# callback function
+def button_press(gpio, level, tick):
+    print("Täitmiskaas lahti:", SAFETY, ", tõus:", level, ", aeg: ", tick)
+    return SAFETY
+
+# callback if a button is pressed (like interrupts but lame)
+cb0 = pi.callback(SAFETY, pigpio.FALLING_EDGE, button_press)
 
 def kaas_state():       # REAALNE JUHTMESTUS ÕIETI TEHA!!
     # returns 1 if hatch closed
@@ -139,8 +157,8 @@ QUALIFIER_TIME = 50000  #microseconds
 #dictionary to return NUPP nr instead of gpio nr
 dix = {
     17 : "NUPP1",
-    27 : "NUPP2",
-    22 : "NUPP3",
+    27 : "NUPP3",
+    22 : "NUPP2",
     5 : "NUPP4"
 }
 
