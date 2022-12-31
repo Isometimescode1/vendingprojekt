@@ -1,3 +1,12 @@
+#
+# Nimetus:      hardware.py
+# Kirjeldus:    tegeleb Müügiautomaadis Raspberry GPIO külge ühendatuga (samm mootor, lineaartäitur, valgustid, surunupud, numbriklaviatuur), 
+# Autor:        Erik Lootus, Hardi Tambets
+# Kuupäev:      12.2022
+# Kokku laenatud kood viidatud
+#
+
+
 import pigpio
 from time import sleep
 
@@ -212,6 +221,7 @@ cb4 = pi.callback(NUPP4, pigpio.FALLING_EDGE, button_press)
 _DEFAULT_NAME = "Keypad"
 I2C_ADDRESS = [0x4B]
 
+FIFO_SIZE = 16
 INTERRUPT_PIN = 6
 
 # Register codes for the keypad
@@ -316,6 +326,13 @@ class QwiicKeypad(object):
         """
         # set bit0, commanding keypad to update fifo
         pi.i2c_write_byte_data(self.handle, KEYPAD_UPDATE_FIFO, 0x01)
+
+#eemaldab suvalise klaviatuurivajutused FIFO puhvrist
+def clear_fifo():
+    for x in range(FIFO_SIZE):
+        numpad.update_fifo()
+        numpad.get_button()
+
 
 # Siin luuake numpadi klass, mida kasutatakse kuni reboodini
 numpad = QwiicKeypad()

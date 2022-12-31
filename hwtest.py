@@ -1,3 +1,10 @@
+#
+# Nimetus:      hwtest.py
+# Kirjeldus:    temp fail, kus erinevaid GPIOga ja muu riistvaraga seotud asju testida saab 
+# Autor:        Hardi Tambets
+# Kuupäev:      12.2022
+#
+
 #import pigpio
 #import sys
 import hardware as hw

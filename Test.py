@@ -1,3 +1,11 @@
+#
+# Nimetus:      Test.py
+# Kirjeldus:    Juhib müügiautomaadi mälumängu ja graafilist kasutajaliidest
+# Autor:        Erik Lootus, Hardi Tambets
+# Kuupäev:      12.2022
+#
+
+
 from guizero import App, PushButton, Text, Box, TextBox, Window, Picture
 import Excel_read as Excel
 from tkinter import Message
@@ -15,7 +23,7 @@ class Game:
       self.mängu_pikkus = 5
       self.valitud_str = "Error: Koogel moogel!"
       self.digit = 0
-      self.full_input
+      self.full_input = 0
     
     VALE_VASTUS = "Vale vastus!"
     ÕIGE_VASTUS = "Õige, tubli laps!"
@@ -25,8 +33,6 @@ mäng = Game(0)
 #alustab mängu, vaja palju asju juurde lisada
 def start(age=None):
     
-    input_digit = 0
-
     if age != None:
         mäng.vanus = age
 
@@ -65,15 +71,29 @@ def start(age=None):
     #kui küsimus nõuab numbrilist sisendit siis kuvab sisestuskasti ja tegeleb selle sisendiga:
     if rida.input == 1:
         print("Sisestus: küsimusega kaasenb numbrite sisestus")
+        a_vastus.hide()
+        #input_text_box.show()
+        input_textbox.clear()
         input_textbox.show()
         input_textbox.focus()
         window2.update()
+
+        hw.clear_fifo()     #Puhastab numpadi puhvri
         while mäng.digit != "#":
             mäng.digit = hw.get_digit()     #ootame sisestust ja ei tee midagi muud
+            if mäng.digit == "#":
+                break
             input_textbox.append(mäng.digit)
+            window2.update()
+        mäng.full_input = input_textbox.value
+        print("mäng.full: ", mäng.full_input)
+        print("rida.answer: ", rida.answer)
+        kontrolli_vastust(mäng.full_input, rida.answer)
 
     else:
         print("Sisestus: küsimusega ei kaasne numbrite sisestust")
+        #input_text_box.hide()
+        a_vastus.show()
 
    
 #hangib küsimuse question class-ina.
@@ -93,7 +113,7 @@ def läks():
     vanur.show()
 
 #funktsioon kontrollib vastust ja avab vastava lehe
-def kontrolli_vastust(vastus):
+def kontrolli_vastust(vastus, num_vastus = None):
     
     #kuvab hariliku uue küsimuse nupu igal korral kui mängu pikkus pole veel teäidetud
     uus_küsimus_button.show()
@@ -105,14 +125,30 @@ def kontrolli_vastust(vastus):
     valesid_nr_text.clear()
     õigeid_nr_text.clear()
 
-    if vastus == mäng.õige_nupp:
+    #numbrilise vastuse korral:
+    if num_vastus != None:
+        #muudab mõlemad int-ideks, et saaks võrrelda
+        int_vastus = int(vastus)                # see oli str
+        int_num_vastus = num_vastus.item()      # see oli numpy.int64
+
+        if int_vastus == int_num_vastus:
+            open_window2()
+            vastus_tulemus.append(mäng.ÕIGE_VASTUS)
+            mäng.õigeid += 1
+            print("õige")
+        else:
+            vastus_tulemus.append(mäng.VALE_VASTUS)
+            open_window2()
+            mäng.valesid += 1 
+            print("vale")
+    #Surunupu vastuse korral:
+    elif vastus == mäng.õige_nupp:
         open_window2()
         vastus_tulemus.append(mäng.ÕIGE_VASTUS)
-        mäng.õigeid += 1
-        
+        mäng.õigeid += 1   
     else:
-        open_window2()
         vastus_tulemus.append(mäng.VALE_VASTUS)
+        open_window2()
         mäng.valesid += 1
     
     # Uuendab kuvatavas tekstis skoori
@@ -122,8 +158,9 @@ def kontrolli_vastust(vastus):
     skoor_nr_text.append(mäng.skoor)
 
     #v[vastus].text on valitud vastus, prindib selle silumiseks
-    string = "v" + str(vastus) + ".text"
-    print("Valiti vastus:", eval(string))
+    if num_vastus == None:
+        string = "v" + str(vastus) + ".text"
+        print("Valiti vastus:", eval(string))
 
     # kui mäng läbi saab kuvab lõpu nupu ja skoori
     if mäng.skoor >= mäng.mängu_pikkus:
@@ -140,7 +177,6 @@ def full_reset():
     mäng.valesid = 0
     mäng.vanus = 0
     open_window()
-
 
 
 # meetodid, mis avavad ja sulgevad soovitud aknaid
@@ -238,7 +274,9 @@ app.show()
 #Boxes
 
 buttons_box =           Box(window1, width="fill", align="bottom", border=1, layout="grid")
-answer_name_box =       Box(window1, width="fill", align="bottom", border=1, layout="grid")
+answer_name_box =       Box(window1, width="fill", align="bottom", border=1)#, layout="grid")
+input_text_box =        Box(answer_name_box, width = "fill", height = "fill")#, grid = [0,0] )      #et see kuradi teksti sisestuslkast keskel püsiks
+input_text_box.hide()
 spacer_box1 =           Box(windowage, width ="fill", height=300, align="bottom", border=0)
 age_selection_box =     Box(windowage, width="fill", height=300, align="bottom", border=0, layout="grid")
 age_spacer_box =        Box(age_selection_box, width=250, grid=[0,0], border=0) #vanuse valiku nuppude tsentrisse paigutamise jaoks
@@ -301,7 +339,7 @@ skoor_nr_text   = Text(skoor_box, text=mäng.skoor, size=60, align="bottom", fon
 valesid_nr_text = Text(valesid_box, text=mäng.valesid, size=60, align="bottom", font="Didot", color="black", grid= [2,0])
 
 #TextBox widgets
-input_textbox   = TextBox(window1)
+input_textbox   = TextBox(answer_name_box, align = "top")
 input_textbox.bg ="white"
 input_textbox.font = "Didot"
 input_textbox.text_size = 50
@@ -313,11 +351,11 @@ splash_picture = Picture(app, image = "Images/splash.jpg")
 question_picture = Picture(window1, image ="Images/placeholder.jpg")
 
 #paneb lehed täisekraanile ja displayb esimese lehe
-app.set_full_screen()
-windowage.set_full_screen()
-window1.set_full_screen()
+#app.set_full_screen()
+#windowage.set_full_screen()
+#window1.set_full_screen()
 window1.add_tk_widget(disp_küsimus)
-window2.set_full_screen()
-window3.set_full_screen()
+#window2.set_full_screen()
+#window3.set_full_screen()
 #app.add_tk_widget(disp_küsimus)
 app.display()
