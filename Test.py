@@ -1,7 +1,8 @@
-from guizero import App, PushButton, Text, Window, Picture, Box
+from guizero import App, PushButton, Text, Box, TextBox, Window, Picture
 import Excel_read as Excel
 from tkinter import Message
 import random
+import hardware as hw
 
 #sisaldab käesoleva mälumänguga seotud infot
 class Game:
@@ -13,6 +14,8 @@ class Game:
       self.õige_nupp = 0
       self.mängu_pikkus = 5
       self.valitud_str = "Error: Koogel moogel!"
+      self.digit = 0
+      self.full_input
     
     VALE_VASTUS = "Vale vastus!"
     ÕIGE_VASTUS = "Õige, tubli laps!"
@@ -22,6 +25,8 @@ mäng = Game(0)
 #alustab mängu, vaja palju asju juurde lisada
 def start(age=None):
     
+    input_digit = 0
+
     if age != None:
         mäng.vanus = age
 
@@ -57,9 +62,16 @@ def start(age=None):
         print("Pilt: Küsimusega ei kaasne pilti")
         question_picture.hide()
 
-    #kui küsimus nõuab numbrilist sisendit siis kuvab sisestuskasti:
+    #kui küsimus nõuab numbrilist sisendit siis kuvab sisestuskasti ja tegeleb selle sisendiga:
     if rida.input == 1:
         print("Sisestus: küsimusega kaasenb numbrite sisestus")
+        input_textbox.show()
+        input_textbox.focus()
+        window2.update()
+        while mäng.digit != "#":
+            mäng.digit = hw.get_digit()     #ootame sisestust ja ei tee midagi muud
+            input_textbox.append(mäng.digit)
+
     else:
         print("Sisestus: küsimusega ei kaasne numbrite sisestust")
 
@@ -206,16 +218,16 @@ def close_windows(quit=None):
 #display the app avaleht
 app = App(title="Avaleht", layout="auto", bg = "#7B4E4E")
 
-#teine lehekülg küsimuste jaoks
+#Leht vanuse küsimiseks
 windowage = Window(app, title="Kirjuta oma vanus", layout="auto", bg = "#7B4E4E")
 
-#kolmas lehekülg vastused
+#Leht Küsimust ja vastuste esitamiseks (põhipingutus)
 window1 = Window(app, title="Küsimusteleht", layout="auto", bg = "#7B4E4E")
 
-#neljas lehekülg vastasid õigesti + kas tahad uuesti mängida
+#Leht Küsimuste vahel tulemuste kuvamiseks
 window2 = Window(app, title="Skoori vaheleht", layout="auto", bg = "#7B4E4E")
 
-#viies lehekülg vastasid valesti
+#Pole kasututses
 window3 = Window(app, title="Lõpuleht", layout="auto", bg = "#7B4E4E")
 
 
@@ -232,8 +244,8 @@ age_selection_box =     Box(windowage, width="fill", height=300, align="bottom",
 age_spacer_box =        Box(age_selection_box, width=250, grid=[0,0], border=0) #vanuse valiku nuppude tsentrisse paigutamise jaoks
 age_description_box =   Box(windowage, width="fill", height=100, align="bottom", border=0)
 
-spacer_box2 =           Box(window2, width = 1000, height=200, align="bottom", border=0)
-skoor_üldine_box =      Box(window2, width = "fill", height = 600, align="bottom", border=0)
+spacer_box2 =           Box(window2, width = 1000, height=200, align="bottom", border=1)
+skoor_üldine_box =      Box(window2, width = "fill", height = 600, align="bottom", border=1)
 skoor_spacer_box =      Box(skoor_üldine_box, width = 200, height = "fill", align="left", border=0)
 valesid_box =           Box(skoor_üldine_box, width = 1000, height=200, align="bottom", border=0, layout="grid")
 õigeid_box =            Box(skoor_üldine_box, width = 1000, height=200, align="bottom", border=0, layout="grid")
@@ -265,9 +277,9 @@ close_button2       = PushButton(windowage, text="Sulge leht 2", command=close_w
 close_button3       = PushButton(window1, text="Sulge leht 3", command=close_windows)
 uus_küsimus_button  = PushButton(window2, text="Järgmine küsimus, palun", command=start)
 algusesse_button    = PushButton(window2, text="Tagasi algusesse", command=full_reset, visible=0)
-#close_button5 = PushButton(window3, text="Tagasi algusesse", command=full_reset)
-close_button6 = PushButton(window2, text="Sulge mäng", command=close_windows)
-#close_button7 = PushButton(window3, text="Sulge mäng", command=close_windows)
+#close_button5      = PushButton(window3, text="Tagasi algusesse", command=full_reset)
+close_button6       = PushButton(window2, text="Sulge mäng", command=close_windows)
+#close_button7      = PushButton(window3, text="Sulge mäng", command=close_windows)
 
 #text widgets
 
@@ -287,6 +299,13 @@ valesid_text    = Text(valesid_box, text="Valesid vastuseid:", size=60, align="b
 skoor_nr_text   = Text(skoor_box, text=mäng.skoor, size=60, align="bottom", font="Didot", color="black", grid= [2,0])
 õigeid_nr_text  = Text(õigeid_box, text=mäng.õigeid, size=60, align="bottom", font="Didot", color="black", grid= [2,0])
 valesid_nr_text = Text(valesid_box, text=mäng.valesid, size=60, align="bottom", font="Didot", color="black", grid= [2,0])
+
+#TextBox widgets
+input_textbox   = TextBox(window1)
+input_textbox.bg ="white"
+input_textbox.font = "Didot"
+input_textbox.text_size = 50
+input_textbox.hide()
 
 #Picture widgets
 
