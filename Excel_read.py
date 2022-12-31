@@ -13,7 +13,7 @@ Group3_data = pandas.read_excel (excel_file_name, excel_sheet_group3)
 
 #ühte konkreetset küsimust kirjeldav class
 class Question:
-    def __init__(self, nr, text, answer, false1, false2, false3, image, age_group):
+    def __init__(self, nr, text, answer, false1, false2, false3, image, input, age_group):
         self.nr = nr            #Exceli faili rea number
         self.text = text        #Küsimuse tekst
         self.answer = answer    #Küsimuse vastus
@@ -21,6 +21,7 @@ class Question:
         self.false2 = false2    #Teine vale valikuvõimaluse
         self.false3 = false3    #Kolmas vale valkuvõimalus
         self.image = image      #Bool kas küsimusega käib kaasas ka pilt?
+        self.input = input      #Bool kas küsimusega käib kaasas numbrite sisestus?
         self.age_group = age_group  #Vanusegrupp kuhu see küssa kuulub
 
 #küsimuste faili kirjeldav (sisaldav?) class        
@@ -41,7 +42,8 @@ def get_question(age_group):
             q_max=Group2_data.shape[0]-1
             i=random.randint(0,q_max)
             #print(i)
-            kysimus = Question(i+2, Group2_data.at[i,'Küssa'],Group2_data.at[i,'Vastus'],Group2_data.at[i,'Valik1'], Group2_data.at[i,'Valik2'], Group2_data.at[i,'Valik3'], Group2_data.at[i,'Pilt'], Group2_data.at[i,'Vanusegrupp'])
+            kysimus =   Question(i+2, Group2_data.at[i,'Küssa'],Group2_data.at[i,'Vastus'],Group2_data.at[i,'Valik1'], 
+                        Group2_data.at[i,'Valik2'], Group2_data.at[i,'Valik3'], Group2_data.at[i,'Pilt'], Group2_data.at[i,'Sisestus'], Group2_data.at[i,'Vanusegrupp'])
         case 3:
             q_max=Group3_data.shape[0]-1
             i=random.randint(0,q_max)
@@ -69,4 +71,4 @@ def get_reso(path):
     wid, hgt = img.size
     return[str(wid), str(hgt)]
 
-get_reso("/home/pi/vendingprojekt-1/Images/splash.jpg")
+#get_reso("/home/pi/vendingprojekt-1/Images/splash.jpg")

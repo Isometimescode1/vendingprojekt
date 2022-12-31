@@ -205,12 +205,14 @@ cb4 = pi.callback(NUPP4, pigpio.FALLING_EDGE, button_press)
 
 # ------------   I2C for KEYPAD   ----------------------------------------------------------------------------------------
 # Muudetud SparkFun Qwiic_keyboard.py
-# The name of this device
+# Set Raspi i2c baud to something low, boot/config.txt 10000baud
 
 #VÄGA KAHTLANE KAS KÕIK TÖÖTAB NII NAGU PEAKS
 
 _DEFAULT_NAME = "Keypad"
 I2C_ADDRESS = [0x4B]
+
+INTERRUPT_PIN = 6
 
 # Register codes for the keypad
 KEYPAD_ID       = 0x00
@@ -249,7 +251,9 @@ class QwiicKeypad(object):
             :return: Returns true of the initializtion was successful, otherwise False.
             :rtype: bool
         """
+        print("aadress: ", self.address)
         self.handle = pi.i2c_open(1, self.address)
+        print("handle: ", self.handle)
 
 
     # ---------------------------------------------------------------
@@ -286,7 +290,7 @@ class QwiicKeypad(object):
             print("IO error")
             pass
 
-        return value
+        return (value)
 
     #----------------------------------------------------------------
     # Returns the number of milliseconds since the current button in FIFO was pressed.
@@ -311,6 +315,27 @@ class QwiicKeypad(object):
         :return: No return value
         """
         # set bit0, commanding keypad to update fifo
-        pi.i2c_write_byte_data(self.handle, KEYPAD_UPDATE_FIFO, 0x01) 
+        pi.i2c_write_byte_data(self.handle, KEYPAD_UPDATE_FIFO, 0x01)
 
+# Siin luuake numpadi klass, mida kasutatakse kuni reboodini
+numpad = QwiicKeypad()
+numpad.begin()
+TRELLID = 35        #ASCII '#' = 35 decimal
+LIL_LAG = 0         #kui raspi baud rate-i ei muuda on mingit aeglustust vaja attiny numpadi küljes ei saa muidu hakkama
+
+# ootab kuni numpadil miskit vajutatakse ja siis tagastab selle char-ina
+def get_digit():
+    klahv = 0
+    while klahv != TRELLID:
+        numpad.update_fifo()
+        klahv = numpad.get_button()
+        if klahv == TRELLID:
+            break
+        elif klahv != 0x00:
+            #print("Sisestati:", klahv)
+            break
+        else:
+            #if klahv == 0, ootame nupuvajutust
+            sleep(LIL_LAG)
+    return chr(klahv)
 # ------------   I2C for KEYPAD endex   ----------------------------------------------------------------------------------------
