@@ -40,7 +40,7 @@ def start(age=None):
     v2.text = answers[1]
     v3.text = answers[2]
     v4.text = answers[3]
-    #Õige vastuse kontrollimiseks
+    #Õige vastuse kontrollimiseks jätab õige "nupu" numbri meelde
     mäng.õige_nupp = answers.index(rida.answer)+1
 
     # kui küsimusega on ette nähtud kaasnema pilt, siis kuvab selle (question_picture)
@@ -57,10 +57,16 @@ def start(age=None):
         print("Pilt: Küsimusega ei kaasne pilti")
         question_picture.hide()
 
+    #kui küsimus nõuab numbrilist sisendit siis kuvab sisestuskasti:
+    if rida.input == 1:
+        print("Sisestus: küsimusega kaasenb numbrite sisestus")
+    else:
+        print("Sisestus: küsimusega ei kaasne numbrite sisestust")
+
    
 #hangib küsimuse question class-ina.
 def too_küsimus(vanus):
-    küs_rida=Excel.get_question(vanus)
+    küs_rida = Excel.get_question(vanus)
     print("Küsimus on: ", küs_rida.text)
     return küs_rida
 
