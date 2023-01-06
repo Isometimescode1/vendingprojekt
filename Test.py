@@ -12,6 +12,7 @@ from tkinter import Message
 import random
 import hardware as hw
 
+
 #sisaldab käesoleva mälumänguga seotud infot
 class Game:
     def __init__(self, age_group):
@@ -277,10 +278,10 @@ buttons_box =           Box(window1, width="fill", align="bottom", border=1, lay
 answer_name_box =       Box(window1, width="fill", align="bottom", border=1)#, layout="grid")
 input_text_box =        Box(answer_name_box, width = "fill", height = "fill")#, grid = [0,0] )      #et see kuradi teksti sisestuslkast keskel püsiks
 input_text_box.hide()
-spacer_box1 =           Box(windowage, width ="fill", height=300, align="bottom", border=0)
-age_selection_box =     Box(windowage, width="fill", height=300, align="bottom", border=0, layout="grid")
-age_spacer_box =        Box(age_selection_box, width=250, grid=[0,0], border=0) #vanuse valiku nuppude tsentrisse paigutamise jaoks
-age_description_box =   Box(windowage, width="fill", height=100, align="bottom", border=0)
+spacer_box1 =           Box(windowage, width ="fill", height=300, align="bottom", border=1)
+age_selection_box =     Box(windowage, width="fill", height=300, align="bottom", border=1, layout="grid")
+age_spacer_box =        Box(age_selection_box, width=170, grid=[0,0], border=1) #vanuse valiku nuppude tsentrisse paigutamise jaoks
+age_description_box =   Box(windowage, width="fill", height=100, align="bottom", border=1)
 
 spacer_box2 =           Box(window2, width = 1000, height=200, align="bottom", border=1)
 skoor_üldine_box =      Box(window2, width = "fill", height = 600, align="bottom", border=1)
@@ -326,7 +327,7 @@ disp_küsimus.pack()
 tere_tulemast   = Text(app, text="Tere tulemast unikaalse müügiautomaadi juurde!", size=60, align = "top", font="Didot", color="black")
 tekst_1         = Text(windowage, text="Vali sobiv vanusegrupp:", align = "top", size=60, font="Didot", color="black")
 tekst_vanus_selgitus = Text(windowage, text="Kusimused on jaotatud vanuste alusel, et anda kõigile võrdne võimalus ;)", align = "top", size=30, font="Didot", color="black")
-age_description_text = Text(age_description_box, text="                                   Olen nooruk!                Keskiga juba käes!              Vanaks jäänud...", align = "left", size=30, font="Didot", color="black")
+age_description_text = Text(age_description_box, text="Olen nooruk!                Keskiga juba käes!              Vanaks jäänud...", align = "top", size=30, font="Didot", color="black")
 vastus_tulemus       = Text(window2, text="Initilize", size=60, align = "top", font="Didot", color="black")
 
 a_vastus        = Text(answer_name_box, text="         A:                   B:                  C:                  D:",size=60, font="Didot", color="#3F3E3E", grid= [0,0])
@@ -351,9 +352,9 @@ splash_picture = Picture(app, image = "Images/splash.jpg")
 question_picture = Picture(window1, image ="Images/placeholder.jpg")
 
 #paneb lehed täisekraanile ja displayb esimese lehe
-#app.set_full_screen()
-#windowage.set_full_screen()
-#window1.set_full_screen()
+app.set_full_screen()
+windowage.set_full_screen()
+window1.set_full_screen()
 window1.add_tk_widget(disp_küsimus)
 #window2.set_full_screen()
 #window3.set_full_screen()

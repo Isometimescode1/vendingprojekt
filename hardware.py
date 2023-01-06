@@ -10,6 +10,7 @@
 import pigpio
 from time import sleep
 
+
 # Connect to pigpiod daemon START PIGPIO FROM TERMINAL WITH "sudo pigpiod", will probably cause problems......
 pi = pigpio.pi()
 if pi != 0:

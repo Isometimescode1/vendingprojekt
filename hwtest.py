@@ -5,18 +5,30 @@
 # Kuupäev:      12.2022
 #
 
-import pigpio
+#import pigpio
 #import sys
 #import hardware as hw
 from time import sleep
+import os
+import threading
 
-import leds
+#import leds
 
-LIL_LAG = 0         #kui raspi baud rate-i ei muuda on mingit aeglustust vaja attiny numpadi küljes ei saa muidu hakka
+def caller():
+    os.system("sudo python3 -c 'import leds; leds.rainbow_cycle(0.0001)'")
+        
+t1 = threading.Thread(target=caller)
+
+
 while(1):
-    leds.rainbow_cycle(0.001)
-
-    sleep(1)
-
-    print(input)
-    
+    #os.system("sudo python3 -c 'import leds; leds.rainbow_cycle(0.0001)'")
+    t1.start()
+    for i in range(10):
+        print("i", i)
+        sleep(1)
+    t1.join()
+    os.system("sudo python3 -c 'import leds; leds.rainbow_cycle(0.001)'")
+    print("johhaidii")
+    for i in range(10):
+        print("u", i)
+        sleep(1)
