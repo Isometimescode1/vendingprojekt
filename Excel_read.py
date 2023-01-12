@@ -5,11 +5,9 @@
 # Kuupäev:      12.2022
 #
 
-
 import pandas
 import random
 import PIL
-
 
 excel_file_name = 'Küsimused.xlsx'
 excel_sheet_group1 = 'Grupp_1'
@@ -59,19 +57,41 @@ def get_question(age_group):
             kysimus =   Question(i+2, Group3_data.at[i,'Küssa'],Group3_data.at[i,'Vastus'],Group3_data.at[i,'Valik1'], 
                         Group3_data.at[i,'Valik2'], Group3_data.at[i,'Valik3'], Group3_data.at[i,'Pilt'], Group3_data.at[i,'Sisestus'], Group3_data.at[i,'Vanusegrupp'])
         case _:
-            print("Terror: vanusegrupp valimata")
+            print("Error: vanusegrupp valimata")
 
     return kysimus
 
+# Prindib terve suvalise exceli rea soovitud vanusegrupist
+def print_rand_rida(x):
+    proov=get_question(x)
+    attrs = vars(proov)
+    print(', '.join("%s: %s" % item for item in attrs.items()))
 
-proov=get_question(2)
-attrs = vars(proov)
-print(', '.join("%s: %s" % item for item in attrs.items()))
+# Prindib terve exceli rea kindla küsimuse kindlast vanusegrupist. i = exceli rea number. Pandase jaoks on rida null esimene data rida pealkirja rea all.
+def anna_küssa(i, vanus):
+    if i == 1:
+        print("See on pealkirja rida, siin pole küsimusi")
+    i = i - 2
+    match vanus:
+        case 1:
+            kysimus =   Question(i+2, Group1_data.at[i,'Küssa'],Group1_data.at[i,'Vastus'],Group1_data.at[i,'Valik1'], 
+                        Group1_data.at[i,'Valik2'], Group1_data.at[i,'Valik3'], Group1_data.at[i,'Pilt'], Group1_data.at[i,'Sisestus'], Group1_data.at[i,'Vanusegrupp'])
+        case 2:
+            kysimus =   Question(i+2, Group2_data.at[i,'Küssa'],Group2_data.at[i,'Vastus'],Group2_data.at[i,'Valik1'], 
+                        Group2_data.at[i,'Valik2'], Group2_data.at[i,'Valik3'], Group2_data.at[i,'Pilt'], Group2_data.at[i,'Sisestus'], Group2_data.at[i,'Vanusegrupp'])
+        case 3:
+            kysimus =   Question(i+2, Group3_data.at[i,'Küssa'],Group3_data.at[i,'Vastus'],Group3_data.at[i,'Valik1'], 
+                        Group3_data.at[i,'Valik2'], Group3_data.at[i,'Valik3'], Group3_data.at[i,'Pilt'], Group3_data.at[i,'Sisestus'], Group3_data.at[i,'Vanusegrupp'])
+        case _:
+            print("Error: vanusegrupp valimata")
+
+    attrs = vars(kysimus)
+    print(', '.join("%s: %s" % item for item in attrs.items()))
+    return kysimus
+
 
 #print(Group2_data.shape)
-
 #print(excel_data)
-
 #print(Group2_data.at[0,'Küssa'])
 
 #piltidega maadlemine:

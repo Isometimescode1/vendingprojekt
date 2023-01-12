@@ -27,6 +27,7 @@ class Game:
       self.digit = 0
       self.full_input = 0
       self.vajutatud_nupp = 0
+      self.kasutatud_küssad = []
     
     Q_TIMEOUT = 120 #kui kaua küsimuse vastust oodatakse, sekundites
     Q_POLL_PERIOD = 0.1 #kui tihti nupuvautus kontrollitakse, sekundites
@@ -109,9 +110,14 @@ def start(age=None):
     kontrolli_vastust(mäng.vajutatud_nupp)
 
    
-#hangib küsimuse question class-ina.
+#hangib küsimuse question class-ina. Kontrollib et ühes mängus üht küsimust mitu kporda ei tule.
 def too_küsimus(vanus):
-    küs_rida = Excel.get_question(vanus)
+    while(1):
+        küs_rida = Excel.get_question(vanus)
+        if küs_rida.nr not in mäng.kasutatud_küssad:
+            mäng.kasutatud_küssad.append(küs_rida.nr)
+            break
+    
     print("Küsimus on: ", küs_rida.text)
     return küs_rida
 
@@ -206,6 +212,7 @@ def full_reset():
     mäng.õigeid = 0
     mäng.valesid = 0
     mäng.vanus = 0
+    mäng.kasutatud_küssad.clear()
     open_window()
 
 
