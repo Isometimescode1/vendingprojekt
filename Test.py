@@ -62,8 +62,8 @@ def start(age=None):
         question_picture.image = path
         #määrab pildi suuruseks faili resolutsiooni, muidu hakkab pilte moonutama. Suurim lubatud pilt 1920 x 600
         print(path)
-        #question_picture.width = int(Excel.get_reso(path)[0])
-        #question_picture.height = int(Excel.get_reso(path)[1])
+        question_picture.width = int(Excel.get_reso(path)[0])
+        question_picture.height = int(Excel.get_reso(path)[1])
         question_picture.show()
     else:
         print("Pilt: Küsimusega ei kaasne pilti")
@@ -302,14 +302,18 @@ keskealine.text_size = 30
 vanur =         PushButton(age_selection_box, command = start, args = [3], width = 20, align= "left", height = 3, text =">=19", visible=0, grid= [3,0])
 vanur.text_size = 30
 
-v1 =            PushButton(buttons_box, command = kontrolli_vastust, args = [1], width = 20, grid= [0,0], height = 3, visible=0)
+v1 =            PushButton(buttons_box, command = kontrolli_vastust, args = [1], width = 18, grid= [0,0], height = 3, visible=0)
 v1.text_size = 30
-v2 =            PushButton(buttons_box, command = kontrolli_vastust, args = [2], width = 21, grid= [1,0], height = 3, visible=0)
+v1.tk.config(wraplength=440)
+v2 =            PushButton(buttons_box, command = kontrolli_vastust, args = [2], width = 18, grid= [1,0], height = 3, visible=0)
 v2.text_size = 30
-v3 =            PushButton(buttons_box, command = kontrolli_vastust, args = [3], width = 21, grid= [2,0], height = 3, visible=0)
+v2.tk.config(wraplength=440)
+v3 =            PushButton(buttons_box, command = kontrolli_vastust, args = [3], width = 19, grid= [2,0], height = 3, visible=0)
 v3.text_size = 30
-v4 =            PushButton(buttons_box, command = kontrolli_vastust, args = [4], width = 20, grid= [3,0], height = 3, visible=0)
+v3.tk.config(wraplength=440)
+v4 =            PushButton(buttons_box, command = kontrolli_vastust, args = [4], width = 18, grid= [3,0], height = 3, visible=0)
 v4.text_size = 30
+v4.tk.config(wraplength=440)
 
 close_button1       = PushButton(app, text="Sulge leht 1", command=close_windows)
 close_button2       = PushButton(windowage, text="Sulge leht 2", command=close_windows)
@@ -324,13 +328,13 @@ close_button6       = PushButton(window2, text="Sulge mäng", command=close_wind
 
 disp_küsimus    = Message(window1.tk, text="Kui näed seda teksti, anna automaadi kantseldajale teada.", font=("Didot", 30), width=1600)
 disp_küsimus.pack()
-tere_tulemast   = Text(app, text="Tere tulemast unikaalse müügiautomaadi juurde!", size=60, align = "top", font="Didot", color="black")
+tere_tulemast   = Text(app, text="Tere tulemast unikaalse müügiautomaadi juurde!", size=50, align = "top", font="Didot", color="black")
 tekst_1         = Text(windowage, text="Vali sobiv vanusegrupp:", align = "top", size=60, font="Didot", color="black")
 tekst_vanus_selgitus = Text(windowage, text="Kusimused on jaotatud vanuste alusel, et anda kõigile võrdne võimalus ;)", align = "top", size=30, font="Didot", color="black")
 age_description_text = Text(age_description_box, text="Olen nooruk!                Keskiga juba käes!              Vanaks jäänud...", align = "top", size=30, font="Didot", color="black")
 vastus_tulemus       = Text(window2, text="Initilize", size=60, align = "top", font="Didot", color="black")
 
-a_vastus        = Text(answer_name_box, text="         A:                   B:                  C:                  D:",size=60, font="Didot", color="#3F3E3E", grid= [0,0])
+a_vastus        = Text(answer_name_box, text="A:               B:               C:               D:",size=60, font="Didot", color="#3F3E3E", align = "top")
 
 skoor_text      = Text(skoor_box, text="Küsimusi:", size=60, align="bottom", font="Didot", color="black", grid= [1,0])
 õigeid_text     = Text(õigeid_box, text="Õigeid vastuseid:", size=60, align="bottom", font="Didot", color="black", grid= [1,0])
@@ -356,7 +360,7 @@ app.set_full_screen()
 windowage.set_full_screen()
 window1.set_full_screen()
 window1.add_tk_widget(disp_küsimus)
-#window2.set_full_screen()
+window2.set_full_screen()
 #window3.set_full_screen()
 #app.add_tk_widget(disp_küsimus)
 app.display()
