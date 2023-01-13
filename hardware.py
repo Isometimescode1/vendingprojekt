@@ -8,7 +8,7 @@
 
 
 import pigpio
-from time import sleep
+from time import sleep, time
 
 
 # Connect to pigpiod daemon START PIGPIO FROM TERMINAL WITH "sudo pigpiod", will probably cause problems......
@@ -166,10 +166,10 @@ QUALIFIER_TIME = 50000  #microseconds
 
 #dictionary to return NUPP nr instead of gpio nr
 dix = {
-    17 : "NUPP1",
-    27 : "NUPP3",
-    22 : "NUPP2",
-    5 : "NUPP4"
+    17 : 1,
+    27 : 3,
+    22 : 2,
+    5 : 4
 }
 
 # Set up pins as an input
@@ -183,20 +183,35 @@ pi.set_glitch_filter(NUPP2, QUALIFIER_TIME)
 pi.set_glitch_filter(NUPP3, QUALIFIER_TIME)
 pi.set_glitch_filter(NUPP4, QUALIFIER_TIME)
 
-#holds the value of the most recently pressed button
-pressed = 0
+
+class Nupud():
+    def __init__(self, pressed):
+        self.vajutatud = pressed    #holds the value of the most recently pressed button
+
+nupud = Nupud(0)
 
 # callback function
 def button_press(gpio, level, tick):
     print("Vajutati nuppu:", dix[gpio], ", tõus:", level, ", aeg: ", tick)     #kas töötab ka mitme nupuga korraga???
-    pressed = dix[gpio]
-    return pressed
+    nupud.vajutatud = dix[gpio]
+    return nupud.vajutatud
 
-#peale nupu lugemist võiks 'pressed' muutuja nullida, idk kas nii saab...
+#peale nupu lugemist võiks 'PRESSED' muutuja nullida, idk kas nii saab...
 def reset_button():
-    pressed = 0
-    return pressed
-    
+    nupud.vajutatud = 0
+    return nupud.vajutatud
+
+# Siin reaalselt oodatakse nupuvajutust kuni timeout (s) täis saab
+def get_input(timeout, period):
+    ajalõpp = time() + timeout
+    while time() < ajalõpp:
+        if nupud.vajutatud != 0:
+            return nupud.vajutatud
+        sleep(period)
+    print("Liiga kaua sai oodatud: nupu input timeout!")
+    return 0
+  
+
 # callbacks if a button is pressed (like interrupts but lame)
 cb1 = pi.callback(NUPP1, pigpio.FALLING_EDGE, button_press)
 cb2 = pi.callback(NUPP2, pigpio.FALLING_EDGE, button_press)

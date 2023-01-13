@@ -11,8 +11,9 @@ import Excel_read as Excel
 from tkinter import Message
 import random
 import hardware as hw
+from time import sleep
 
-
+ 
 #sisaldab käesoleva mälumänguga seotud infot
 class Game:
     def __init__(self, age_group):
@@ -25,13 +26,18 @@ class Game:
       self.valitud_str = "Error: Koogel moogel!"
       self.digit = 0
       self.full_input = 0
+      self.vajutatud_nupp = 0
+      self.kasutatud_küssad = []
     
+    Q_TIMEOUT = 120 #kui kaua küsimuse vastust oodatakse, sekundites
+    Q_POLL_PERIOD = 0.1 #kui tihti nupuvautus kontrollitakse, sekundites
     VALE_VASTUS = "Vale vastus!"
     ÕIGE_VASTUS = "Õige, tubli laps!"
 
 mäng = Game(0)
 
 #alustab mängu, vaja palju asju juurde lisada
+
 def start(age=None):
     
     if age != None:
@@ -95,11 +101,23 @@ def start(age=None):
         print("Sisestus: küsimusega ei kaasne numbrite sisestust")
         #input_text_box.hide()
         a_vastus.show()
+    
+    #Resetime viimase nupuvajutuse ja ootame vastust
+    hw.reset_button()
+    print("Vastust oodates...")
+    mäng.vajutatud_nupp = hw.get_input(mäng.Q_TIMEOUT, mäng.Q_POLL_PERIOD)
+    print("Mängu logikasse jõudis nupuvajutus:", mäng.vajutatud_nupp)
+    kontrolli_vastust(mäng.vajutatud_nupp)
 
    
-#hangib küsimuse question class-ina.
+#hangib küsimuse question class-ina. Kontrollib et ühes mängus üht küsimust mitu kporda ei tule.
 def too_küsimus(vanus):
-    küs_rida = Excel.get_question(vanus)
+    while(1):
+        küs_rida = Excel.get_question(vanus)
+        if küs_rida.nr not in mäng.kasutatud_küssad:
+            mäng.kasutatud_küssad.append(küs_rida.nr)
+            break
+    
     print("Küsimus on: ", küs_rida.text)
     return küs_rida
 
@@ -112,6 +130,7 @@ def läks():
     nooruk.show()
     keskealine.show()
     vanur.show()
+
 
 #funktsioon kontrollib vastust ja avab vastava lehe
 def kontrolli_vastust(vastus, num_vastus = None):
@@ -146,7 +165,11 @@ def kontrolli_vastust(vastus, num_vastus = None):
     elif vastus == mäng.õige_nupp:
         open_window2()
         vastus_tulemus.append(mäng.ÕIGE_VASTUS)
-        mäng.õigeid += 1   
+        mäng.õigeid += 1
+    #Küsimuse vastuse ootamise timeout
+    elif vastus == 0:
+        #Seda osa võiks vist täiendada
+        open_window2()
     else:
         vastus_tulemus.append(mäng.VALE_VASTUS)
         open_window2()
@@ -170,6 +193,18 @@ def kontrolli_vastust(vastus, num_vastus = None):
         algusesse_button.show()
         open_window2()
         return()
+    
+    # ootab skoori ekraanin nupuvajutust, et kuvada järgmine küssa
+    hw.reset_button()
+    print("Sisendit oodates, et kuvada järgmine asi...")
+    next_question_input = hw.get_input(mäng.Q_TIMEOUT, mäng.Q_POLL_PERIOD)
+    if next_question_input > 0:
+        start()
+    # kui nupuvajutuse timeout eeldame, et mängija jalutas minema ja resetime
+    else:
+        print("Mängija ei ole pädev ja ei vajutanud ühtki nuppu. Reset.")
+        full_reset()
+
 
     
 def full_reset():
@@ -177,6 +212,7 @@ def full_reset():
     mäng.õigeid = 0
     mäng.valesid = 0
     mäng.vanus = 0
+    mäng.kasutatud_küssad.clear()
     open_window()
 
 
