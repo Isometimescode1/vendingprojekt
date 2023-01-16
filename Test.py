@@ -103,6 +103,7 @@ def start(age=None):
         a_vastus.show()
     
     #Resetime viimase nupuvajutuse ja ootame vastust
+    window1.update()
     hw.reset_button()
     print("Vastust oodates...")
     mäng.vajutatud_nupp = hw.get_input(mäng.Q_TIMEOUT, mäng.Q_POLL_PERIOD)
@@ -131,6 +132,20 @@ def läks():
     keskealine.show()
     vanur.show()
 
+    #----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+    # ootame mingit sisendit, et saaks alustada
+    print("õiges kohas")
+    app.update()
+    hw.reset_button()
+    print("Sisendit oodates, et küsida vanust...")
+    alustus_input = 0
+    while alustus_input == 0:
+        alustus_input = hw.get_input(mäng.Q_TIMEOUT, mäng.Q_POLL_PERIOD)
+    if alustus_input > 0:
+        läks()
+    else:
+        print("siia ei oleks tohtinud jõuda :(")
 
 #funktsioon kontrollib vastust ja avab vastava lehe
 def kontrolli_vastust(vastus, num_vastus = None):
@@ -192,9 +207,22 @@ def kontrolli_vastust(vastus, num_vastus = None):
         uus_küsimus_button.hide()
         algusesse_button.show()
         open_window2()
+
+        #Toote väljastustsükkel
+        hw.väljasta()
+        window2.update()
+        hw.reset_button()
+        algusesse_input = hw.get_input(20, 0.1)
+        if algusesse_input > 0:
+            full_reset()
+        # kui nupuvajutuse timeout eeldame, et mängija jalutas minema ja resetime
+        else:
+            print("Mängija ei ole pädev ja ei vajutanud ühtki nuppu. Reset.")
+            full_reset()
         return()
     
     # ootab skoori ekraanin nupuvajutust, et kuvada järgmine küssa
+    window2.update()
     hw.reset_button()
     print("Sisendit oodates, et kuvada järgmine asi...")
     next_question_input = hw.get_input(mäng.Q_TIMEOUT, mäng.Q_POLL_PERIOD)
@@ -227,6 +255,19 @@ def open_window():
 
     app.show()
     app.focus()         #.focus() ei funka raspi peal :(
+    
+    # ootame mingit sisendit, et saaks alustada
+    app.update()
+    hw.reset_button()
+    print("Sisendit oodates, et küsida vanust...")
+    alustus_input = 0
+    while alustus_input == 0:
+        alustus_input = hw.get_input(mäng.Q_TIMEOUT, mäng.Q_POLL_PERIOD)
+    if alustus_input > 0:
+        läks()
+    else:
+        print("siia ei oleks tohtinud jõuda :(")
+
 
 #2 leht - ava
 def open_windowage():
@@ -261,7 +302,7 @@ def close_window():
 def close_windowage():
     windowage.hide()
     #mäng.vanus = vanus
-    #tart()
+    #start()
 
 #3 leht - sulge
 def close_window1():
@@ -378,6 +419,7 @@ valesid_text    = Text(valesid_box, text="Valesid vastuseid:", size=60, align="b
 skoor_nr_text   = Text(skoor_box, text=mäng.skoor, size=60, align="bottom", font="Didot", color="black", grid= [2,0])
 õigeid_nr_text  = Text(õigeid_box, text=mäng.õigeid, size=60, align="bottom", font="Didot", color="black", grid= [2,0])
 valesid_nr_text = Text(valesid_box, text=mäng.valesid, size=60, align="bottom", font="Didot", color="black", grid= [2,0])
+vajuta_text     = Text(spacer_box2, text="Jätkamiseks vajuta mõnda nuppu", size=35, font="Didot", color="black")
 
 #TextBox widgets
 input_textbox   = TextBox(answer_name_box, align = "top")
@@ -399,4 +441,6 @@ window1.add_tk_widget(disp_küsimus)
 window2.set_full_screen()
 #window3.set_full_screen()
 #app.add_tk_widget(disp_küsimus)
+
+#Mitte miskit ei tohi peale järgnevat rida olla
 app.display()

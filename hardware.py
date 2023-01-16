@@ -26,10 +26,10 @@ MOTOR_STEPS = 200
 # transmission ratio 1:10
 TRANS_RATIO = 10
 # microsteps (200, 400, 800, 1600, 3200) 
-MICROSTEPS = 1600       #(8x the normal steps)
+MICROSTEPS = 400       #(8x the normal steps)
 # number of pocets on wheel = 50
 # rotaion needed for one pocket 360/50 = 7.2 deg
-# steps needed for one pocket (320 steps)
+# steps needed for one pocket (1600 - 320 steps, 400 - 80 steps)
 POCKET_STEPS = MICROSTEPS * TRANS_RATIO / 50 
 
 DIR = 26     # Direction GPIO Pin
@@ -372,3 +372,18 @@ def get_digit():
             sleep(LIL_LAG)
     return chr(klahv)
 # ------------   I2C for KEYPAD endex   ----------------------------------------------------------------------------------------
+
+
+#-------------  Kombod  --------------------------------------------------------------------------------------------------------
+def väljasta():
+    print("Ratta indekseerimine")
+    generate_ramp([ [60, 32],             
+	            [80, 64],
+	            [100, 64],
+	            [80, 64],
+	            [60, 32]])
+    sleep(5)
+    print("Ratas indekseeritud")
+    print("lükkamise algus")
+    actuate_cycle()
+    print("lükatud")
