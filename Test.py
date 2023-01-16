@@ -5,7 +5,6 @@
 # Kuupäev:      12.2022
 #
 
-
 from guizero import App, PushButton, Text, Box, TextBox, Window, Picture
 import Excel_read as Excel
 from tkinter import Message
@@ -32,7 +31,7 @@ class Game:
     Q_TIMEOUT = 120 #kui kaua küsimuse vastust oodatakse, sekundites
     Q_POLL_PERIOD = 0.1 #kui tihti nupuvautus kontrollitakse, sekundites
     VALE_VASTUS = "Vale vastus!"
-    ÕIGE_VASTUS = "Õige, tubli laps!"
+    ÕIGE_VASTUS = "Õige, tubli!"
 
 mäng = Game(0)
 
@@ -132,20 +131,29 @@ def läks():
     keskealine.show()
     vanur.show()
 
-    #----------------------------------------------------------------------------------------------------------------------------------------------------------------
-
     # ootame mingit sisendit, et saaks alustada
-    print("õiges kohas")
-    app.update()
+    windowage.update()
     hw.reset_button()
-    print("Sisendit oodates, et küsida vanust...")
-    alustus_input = 0
-    while alustus_input == 0:
-        alustus_input = hw.get_input(mäng.Q_TIMEOUT, mäng.Q_POLL_PERIOD)
-    if alustus_input > 0:
-        läks()
-    else:
-        print("siia ei oleks tohtinud jõuda :(")
+    print("Vanusegrupi valikut oodates, et küsida esimene küsimus...")
+    vanus_input = 0
+    while vanus_input == 0:
+        vanus_input = hw.get_input(mäng.Q_TIMEOUT, mäng.Q_POLL_PERIOD)
+    
+    # Tegutaseb vastavalt vanusegrupi valikule
+    match vanus_input:
+        case 0:
+            print("Mängija ei valinud vanusegruppi")
+            full_reset()
+            return 0
+        case 4:
+            print("Vanuse lehelt tagasi")
+            full_reset()
+            return 0
+        case _:
+            print("Valiti vanusegrupp:", vanus_input)
+            start(vanus_input)
+            return 0
+
 
 #funktsioon kontrollib vastust ja avab vastava lehe
 def kontrolli_vastust(vastus, num_vastus = None):
@@ -209,15 +217,15 @@ def kontrolli_vastust(vastus, num_vastus = None):
         open_window2()
 
         #Toote väljastustsükkel
-        hw.väljasta()
         window2.update()
+        hw.väljasta()
         hw.reset_button()
-        algusesse_input = hw.get_input(20, 0.1)
+        algusesse_input = hw.get_input(20, mäng.Q_POLL_PERIOD)
         if algusesse_input > 0:
             full_reset()
         # kui nupuvajutuse timeout eeldame, et mängija jalutas minema ja resetime
         else:
-            print("Mängija ei ole pädev ja ei vajutanud ühtki nuppu. Reset.")
+            print("Mängija ei ole viisakas ja ei vajutanud resettimiseks nuppu. Reset.")
             full_reset()
         return()
     
@@ -234,7 +242,7 @@ def kontrolli_vastust(vastus, num_vastus = None):
         full_reset()
 
 
-    
+# Resetib kõik mänguga seotud muutujad ja kuvab avalehe    
 def full_reset():
     mäng.skoor = 0
     mäng.õigeid = 0
@@ -261,7 +269,7 @@ def open_window():
     hw.reset_button()
     print("Sisendit oodates, et küsida vanust...")
     alustus_input = 0
-    while alustus_input == 0:
+    while alustus_input == 0:               
         alustus_input = hw.get_input(mäng.Q_TIMEOUT, mäng.Q_POLL_PERIOD)
     if alustus_input > 0:
         läks()
@@ -356,9 +364,10 @@ answer_name_box =       Box(window1, width="fill", align="bottom", border=1)#, l
 input_text_box =        Box(answer_name_box, width = "fill", height = "fill")#, grid = [0,0] )      #et see kuradi teksti sisestuslkast keskel püsiks
 input_text_box.hide()
 spacer_box1 =           Box(windowage, width ="fill", height=300, align="bottom", border=1)
-age_selection_box =     Box(windowage, width="fill", height=300, align="bottom", border=1, layout="grid")
-age_spacer_box =        Box(age_selection_box, width=170, grid=[0,0], border=1) #vanuse valiku nuppude tsentrisse paigutamise jaoks
-age_description_box =   Box(windowage, width="fill", height=100, align="bottom", border=1)
+age_selection_box =     Box(windowage, width="fill", height=300, align="bottom", border=0, layout="grid")
+age_spacer_box =        Box(age_selection_box, width=170, grid=[0,0], border=0) #vanuse valiku nuppude tsentrisse paigutamise jaoks
+age_description_box =   Box(windowage, width="fill", height=100, align="bottom", border=0)
+#age_button_description_box = Box(age_spacer_box)
 
 spacer_box2 =           Box(window2, width = 1000, height=200, align="bottom", border=1)
 skoor_üldine_box =      Box(window2, width = "fill", height = 600, align="bottom", border=1)
@@ -409,6 +418,7 @@ tere_tulemast   = Text(app, text="Tere tulemast unikaalse müügiautomaadi juurd
 tekst_1         = Text(windowage, text="Vali sobiv vanusegrupp:", align = "top", size=60, font="Didot", color="black")
 tekst_vanus_selgitus = Text(windowage, text="Kusimused on jaotatud vanuste alusel, et anda kõigile võrdne võimalus ;)", align = "top", size=30, font="Didot", color="black")
 age_description_text = Text(age_description_box, text="Olen nooruk!                Keskiga juba käes!              Vanaks jäänud...", align = "top", size=30, font="Didot", color="black")
+age_buton_description_text = Text(spacer_box1, text="Nupp1                           Nupp 2                          Nupp 3", align = "top", size=30, font="Didot", color="black")
 vastus_tulemus       = Text(window2, text="Initilize", size=60, align = "top", font="Didot", color="black")
 
 a_vastus        = Text(answer_name_box, text="A:               B:               C:               D:",size=60, font="Didot", color="#3F3E3E", align = "top")
