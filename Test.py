@@ -214,20 +214,25 @@ def kontrolli_vastust(vastus, num_vastus = None):
         #Kuvab reseti alagatava nupu, et mängu uuesti algusest alustada
         uus_küsimus_button.hide()
         algusesse_button.show()
+        vastus_tulemus.clear()
+        vastus_tulemus.append("Mäng läbi. Kui olid tubli väljastab masin miskit.")
         open_window2()
 
-        #Toote väljastustsükkel
-        window2.update()
-        hw.väljasta()
-        hw.reset_button()
-        algusesse_input = hw.get_input(20, mäng.Q_POLL_PERIOD)
-        if algusesse_input > 0:
-            full_reset()
-        # kui nupuvajutuse timeout eeldame, et mängija jalutas minema ja resetime
+        if mäng.õigeid == 5:
+            hw.väljasta()
         else:
-            print("Mängija ei ole viisakas ja ei vajutanud resettimiseks nuppu. Reset.")
-            full_reset()
-        return()
+            print("ei saa auhinda")
+            window2.update()
+            hw.reset_button()
+            print("Sisendit oodates, et resettida...")
+            next_question_input = hw.get_input(mäng.Q_TIMEOUT, mäng.Q_POLL_PERIOD)
+            if next_question_input > 0:
+                full_reset()
+            # kui nupuvajutuse timeout eeldame, et mängija jalutas minema ja resetime
+            else:
+                print("Mängija ei ole pädev ja ei vajutanud ühtki nuppu. Reset.")
+                full_reset()
+            
     
     # ootab skoori ekraanin nupuvajutust, et kuvada järgmine küssa
     window2.update()
@@ -255,15 +260,15 @@ def full_reset():
 # meetodid, mis avavad ja sulgevad soovitud aknaid
 #1 leht - ava
 def open_window(): 
+    app.show()
+    app.focus()
+    
     close_window1()
     close_window2()
     close_window3()
     splash_picture.show()
     alustusnupp.show()
 
-    app.show()
-    app.focus()         #.focus() ei funka raspi peal :(
-    
     # ootame mingit sisendit, et saaks alustada
     app.update()
     hw.reset_button()
@@ -391,10 +396,10 @@ vanur.text_size = 30
 v1 =            PushButton(buttons_box, command = kontrolli_vastust, args = [1], width = 18, grid= [0,0], height = 3, visible=0)
 v1.text_size = 30
 v1.tk.config(wraplength=440)
-v2 =            PushButton(buttons_box, command = kontrolli_vastust, args = [2], width = 18, grid= [1,0], height = 3, visible=0)
+v2 =            PushButton(buttons_box, command = kontrolli_vastust, args = [2], width = 17, grid= [1,0], height = 3, visible=0)
 v2.text_size = 30
 v2.tk.config(wraplength=440)
-v3 =            PushButton(buttons_box, command = kontrolli_vastust, args = [3], width = 19, grid= [2,0], height = 3, visible=0)
+v3 =            PushButton(buttons_box, command = kontrolli_vastust, args = [3], width = 17, grid= [2,0], height = 3, visible=0)
 v3.text_size = 30
 v3.tk.config(wraplength=440)
 v4 =            PushButton(buttons_box, command = kontrolli_vastust, args = [4], width = 18, grid= [3,0], height = 3, visible=0)
