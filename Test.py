@@ -218,8 +218,11 @@ def kontrolli_vastust(vastus, num_vastus = None):
         vastus_tulemus.append("Mäng läbi. Kui olid tubli väljastab masin miskit.")
         open_window2()
 
-        if mäng.õigeid == 5:
+        if mäng.õigeid == mäng.mängu_pikkus:
+            vajuta_text.hide()
+            window2.update()
             hw.väljasta()
+            vajuta_text.show()
         else:
             print("ei saa auhinda")
             window2.update()
