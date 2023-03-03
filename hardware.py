@@ -402,78 +402,81 @@ class Wheel:
         self.place_in_sequence = 0
 
     rotationSequence = {
-        1: 25
-        2: 12
-        3: 25
-        4: 14
+        1: 5,
+        2: 2,
+        3: 5,
+        4: 4
     }
     
-    # ei luba current poceti väärtuseks midagi 50-st suuremat
-    def advance_index(i):
-        self.current_pocket += i
-        if self.current_pocket > 50:
-            self.current_pocket = self.current_pocket - 50
 
-    # Keerab etteantud arvu taskuid edasi
-    def advance_x(x):
-        steps = POCKET_STEPS * x
-        speedSteps = steps - (2 * ACCEL_STEPS)
-        timeToComplete = 2 + speedSteps/140*1.3  #time to do the steping + a little bit
+ratas = Wheel()
 
-        print("Ratta indekseerimine")
-        motor_direction(0)
-        generate_ramp([ [60, 5],             
-                        [100, 10],
-                        [120, 20],
-                        [140, speedSteps]
-                        [120, 20],
-                        [100, 10],
-                        [60, 5]])
+# ei luba current poceti väärtuseks midagi 50-st suuremat
+def advance_index(i):
+    ratas.current_pocket = ratas.current_pocket + i
+    if ratas.current_pocket > 50:
+        ratas.current_pocket = ratas.current_pocket - 50
 
-        sleep(timeToComplete)
-        advance_index(x)
-        print("Ratas indekseeritud")
+# Keerab etteantud arvu taskuid edasi
+def advance_x(x):
+    steps = POCKET_STEPS * x
+    speedSteps = steps - (2 * ACCEL_STEPS)
+    timeToComplete = 2 + speedSteps/140*1.3  #time to do the steping + a little bit
 
+    print("Ratta indekseerimine")
+    motor_direction(0)
+    generate_ramp([ [60, 5],             
+                    [100, 10],
+                    [120, 20],
+                    [140, int(speedSteps)],
+                    [120, 20],
+                    [100, 10],
+                    [60, 5]])
 
-    # Keerab etteantud taskuni
-    def adcvance_to(x):
-        if x > self.current_pocket:
-            advance_x(x - self.current_pocket)
-        elif x < self.current_pocket:
-            advance_x(self.pockets - self.current_pocket + x)
-        else:
-            print("Ära jama, see tasku on juba ees")
-
-    # hoiab ratast tasakaalus keeramise ajal
-    # Wheel starts at pocket 1
-    # Turning sequence after emptying the first pocket is +25 -> +12 -> +25 -> +13 +shift 1
-    # This succesfully and in a balanced fashin manages to dispence 48 pieces of candy
-    # Candy in pockets 50 and 25 remain and need to be extraced manually
-    def balancedRotate():
-        if self.candy_remaining > 2:
-            match self.place_in_sequence:
-                case 0 or 1:
-                    keera_x(rotationSequence[self.place_in_sequence])
-                    advance_index(rotationSequence[self.place_in_sequence])
-                    self.place_in_sequence = 2
-                case 2:
-                    keera_x(rotationSequence[self.place_in_sequence])
-                    advance_index(rotationSequence[self.place_in_sequence])
-                    self.place_in_sequence += 1
-                case 3:
-                    keera_x(rotationSequence[self.place_in_sequence])
-                    advance_index(rotationSequence[self.place_in_sequence])
-                    self.place_in_sequence += 1
-                case 4:
-                    keera_x(rotationSequence[self.place_in_sequence])
-                    advance_index(rotationSequence[self.place_in_sequence])
-                    self.place_in_sequence = 1
-                case _:
-                    print("Midagi läks metsa. balancedRotate case_")
-        elif self.candy == 2:
+    sleep(timeToComplete)
+    advance_index(x)
+    print("Ratas indekseeritud")
 
 
-                
+# Keerab etteantud taskuni
+def advance_to(x):
+    if x > ratas.current_pocket:
+        advance_x(x - ratas.current_pocket)
+    elif x < ratas.current_pocket:
+        advance_x(ratas.pockets - ratas.current_pocket + x)
+    else:
+        print("Ära jama, see tasku on juba ees")
 
-Ratas = Wheel()
-
+# hoiab ratast tasakaalus keeramise ajal
+# Wheel starts at pocket 1
+# Turning sequence after emptying the first pocket is +25 -> +12 -> +25 -> +13 +shift 1
+# This succesfully and in a balanced fashin manages to dispence 48 pieces of candy
+# Candy in pockets 50 and 25 remain and need to be extraced manually
+def balancedRotate():
+    if ratas.candy_remaining > 2:
+        print("PIS ", ratas.place_in_sequence)
+        match ratas.place_in_sequence:
+            case 0:
+                advance_x(ratas.rotationSequence[ratas.place_in_sequence + 1])
+                advance_index(ratas.rotationSequence[ratas.place_in_sequence + 1])
+                ratas.place_in_sequence = 2
+            case 2:
+                advance_x(ratas.rotationSequence[ratas.place_in_sequence])
+                advance_index(ratas.rotationSequence[ratas.place_in_sequence])
+                ratas.place_in_sequence += 1
+            case 3:
+                advance_x(ratas.rotationSequence[ratas.place_in_sequence])
+                advance_index(ratas.rotationSequence[ratas.place_in_sequence])
+                ratas.place_in_sequence += 1
+            case 4:
+                advance_x(ratas.rotationSequence[ratas.place_in_sequence])
+                advance_index(ratas.rotationSequence[ratas.place_in_sequence])
+                ratas.place_in_sequence = 1
+            case _:
+                print("Midagi läks metsa. balancedRotate case_")
+    elif ratas.candy_remaining == 2:
+        advance_to(25)
+    elif ratas.candy_remaining == 1:
+        advance_to(50)
+    else:
+        print("Soz, rohkem pole")

@@ -1,15 +1,20 @@
 import hardware as hw
 from time import sleep
 
-for x in range(10):
+print("current pocket:", hw.ratas.current_pocket)
 
-	hw.motor_direction(0)
-	hw.generate_ramp([ [60, 5],             
-					[100, 10],
-					[120, 20],
-					[140, 90],
-					[120, 20],
-					[100, 10],
-					[60, 5]])
-	sleep(3)
+hw.balancedRotate()
 
+print("current pocket:", hw.ratas.current_pocket)
+
+hw.balancedRotate()
+
+print("current pocket:", hw.ratas.current_pocket)
+
+hw.balancedRotate()
+
+print("current pocket:", hw.ratas.current_pocket)
+
+hw.balancedRotate()
+
+print("current pocket:", hw.ratas.current_pocket)
