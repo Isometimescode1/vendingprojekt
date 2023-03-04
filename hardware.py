@@ -33,6 +33,7 @@ MICROSTEPS = 400       #(8x the normal steps)
 POCKET_STEPS = MICROSTEPS * TRANS_RATIO / 50
 # steps needed for succesful acceleration
 ACCEL_STEPS = 35
+TOP_SPEED = 90  #Hz
 
 DIR = 26     # Direction GPIO Pin
 STEP = 20    # Step GPIO Pin
@@ -114,6 +115,9 @@ def actuate_cycle():
     pi.write(RETRACT, 1)
     sleep(4)
     pi.write(RETRACT, 0)
+
+    #-1 komm
+    ratas.candy_remaining -= 1
 
 def actuate_push():
     # push out
@@ -399,20 +403,20 @@ class Wheel:
         self.last_ejected = 0
         self.candy_remaining = 50
         self.current_pocket = 1
-        self.place_in_sequence = 0
+        self.place_in_sequence = 1
 
     rotationSequence = {
-        1: 5,
-        2: 2,
-        3: 5,
-        4: 4
+        1: 25,
+        2: 12,
+        3: 25,
+        4: 14
     }
     
 
 ratas = Wheel()
 
 # ei luba current poceti väärtuseks midagi 50-st suuremat
-def advance_index(i):
+def advance_index_by(i):
     ratas.current_pocket = ratas.current_pocket + i
     if ratas.current_pocket > 50:
         ratas.current_pocket = ratas.current_pocket - 50
@@ -421,20 +425,20 @@ def advance_index(i):
 def advance_x(x):
     steps = POCKET_STEPS * x
     speedSteps = steps - (2 * ACCEL_STEPS)
-    timeToComplete = 2 + speedSteps/140*1.3  #time to do the steping + a little bit
+    timeToComplete = 2 + speedSteps/TOP_SPEED*1.2  #time to do the steping + a little bit (/suurim kiirus)
 
     print("Ratta indekseerimine")
     motor_direction(0)
-    generate_ramp([ [60, 5],             
-                    [100, 10],
-                    [120, 20],
-                    [140, int(speedSteps)],
-                    [120, 20],
-                    [100, 10],
-                    [60, 5]])
+    generate_ramp([ [30, 5],             
+                    [50, 10],
+                    [75, 20],
+                    [TOP_SPEED, int(speedSteps)],
+                    [75, 20],
+                    [50, 10],
+                    [30, 5]])
 
     sleep(timeToComplete)
-    advance_index(x)
+    advance_index_by(x)
     print("Ratas indekseeritud")
 
 
@@ -442,10 +446,13 @@ def advance_x(x):
 def advance_to(x):
     if x > ratas.current_pocket:
         advance_x(x - ratas.current_pocket)
+        ratas.current_pocket = x        #vajalik, kuna advance_x paneb muidu vale arvu
     elif x < ratas.current_pocket:
         advance_x(ratas.pockets - ratas.current_pocket + x)
+        ratas.current_pocket = x        #vajalik, kuna advance_x paneb muidu vale arvu
     else:
         print("Ära jama, see tasku on juba ees")
+
 
 # hoiab ratast tasakaalus keeramise ajal
 # Wheel starts at pocket 1
@@ -456,21 +463,17 @@ def balancedRotate():
     if ratas.candy_remaining > 2:
         print("PIS ", ratas.place_in_sequence)
         match ratas.place_in_sequence:
-            case 0:
-                advance_x(ratas.rotationSequence[ratas.place_in_sequence + 1])
-                advance_index(ratas.rotationSequence[ratas.place_in_sequence + 1])
+            case 1:
+                advance_x(ratas.rotationSequence[ratas.place_in_sequence])
                 ratas.place_in_sequence = 2
             case 2:
                 advance_x(ratas.rotationSequence[ratas.place_in_sequence])
-                advance_index(ratas.rotationSequence[ratas.place_in_sequence])
                 ratas.place_in_sequence += 1
             case 3:
                 advance_x(ratas.rotationSequence[ratas.place_in_sequence])
-                advance_index(ratas.rotationSequence[ratas.place_in_sequence])
                 ratas.place_in_sequence += 1
             case 4:
                 advance_x(ratas.rotationSequence[ratas.place_in_sequence])
-                advance_index(ratas.rotationSequence[ratas.place_in_sequence])
                 ratas.place_in_sequence = 1
             case _:
                 print("Midagi läks metsa. balancedRotate case_")

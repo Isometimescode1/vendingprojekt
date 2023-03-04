@@ -1,6 +1,7 @@
+import time
 import board
 import neopixel     #???
-import time
+
 
 pixels = neopixel.NeoPixel(board.D12, 30)
 
@@ -120,4 +121,4 @@ def loopy():
 
         rainbow_cycle(0.001)  # rainbow cycle with 1ms delay per step
 
-
+wheel(100)

@@ -27,6 +27,7 @@ class Game:
       self.full_input = 0
       self.vajutatud_nupp = 0
       self.kasutatud_küssad = []
+      self.kommi_olukord = []
     
     Q_TIMEOUT = 120 #kui kaua küsimuse vastust oodatakse, sekundites
     Q_POLL_PERIOD = 0.1 #kui tihti nupuvautus kontrollitakse, sekundites
@@ -218,10 +219,17 @@ def kontrolli_vastust(vastus, num_vastus = None):
         vastus_tulemus.append("Mäng läbi. Kui olid tubli väljastab masin miskit.")
         open_window2()
 
+        # KOMMIVÄLJASTUS ja RATTA KEERAMINE
         if mäng.õigeid == mäng.mängu_pikkus:
             vajuta_text.hide()
             window2.update()
-            hw.väljasta()
+
+            hw.balancedRotate()
+            sleep(1)
+            hw.actuate_cycle()
+            sleep(1)
+            
+            # kuva jätkamise nupp
             vajuta_text.show()
         else:
             print("ei saa auhinda")
@@ -259,6 +267,67 @@ def full_reset():
     mäng.kasutatud_küssad.clear()
     open_window()
 
+# alustuse ratta ja kommide confi teema
+def full_candy_config():
+    mäng.kommi_olukord = [1 for i in range(hw.ratas.pockets + 1)] #täidab kommi olukorra 1-dega -> igas taskus on komm. +1 on viimase tasku asukoha märkimiseks
+        
+    with open("log_file.txt", "w") as log:
+        for line in mäng.kommi_olukord:
+            log.write(f"{line}\n")
+
+    print("logifail uuendatud (50)")
+    full_reset()
+
+def read_candy_config():
+    log = open("log_file.txt", "r")
+    mäng.kommi_olukord = list(log.read().splitlines())
+    viimane_tasku = mäng.kommi_olukord[hw.ratas.pockets]
+    log.close()
+
+    full_beginning_button.hide()
+    from_file_button.hide()
+    debug2_text.show()
+    debug1_text.clear()
+    debug1_text.append(viimane_tasku)
+    debug1_text.show()
+    yes_button.show()
+    no_button.show()
+    windowdebug.update()
+
+def adjust_position():
+    yes_button.hide()
+    no_button.hide()
+    debug1_text.clear()
+    debug2_text.clear()
+    debug1_text.append("Palju vaja keerata on? Mitu taskut?")
+    debug2_text.append("ratas liigub päripäeva! (kasuta # klahvi enterina ;)")
+
+    # Numpad input handling
+    debug_textbox.clear()
+    debug_textbox.show()
+    debug_textbox.focus()
+    window2.update()
+
+    hw.clear_fifo()     #Puhastab numpadi puhvri
+    while mäng.digit != "#":
+        mäng.digit = hw.get_digit()     #ootame sisestust ja ei tee midagi muud
+        if mäng.digit == "#":
+            break
+        debug_textbox.append(mäng.digit)
+        window2.update()
+    mäng.full_input = debug_textbox.value
+
+    #liiguta ratast nii mitu kohta kui sooviti
+    hw.advance_x(mäng.full_input)
+    #ja määra ratas.current pocket
+    hw.ratas.current_pocket = mäng.kommi_olukord[hw.ratas.pockets]
+    
+    debug1_text.clear()
+    debug2_text.clear()
+    debug1_text.append("Kõik ladna, jõudu :), 3 sek delay")
+    sleep(3)
+    full_reset()
+
 
 # meetodid, mis avavad ja sulgevad soovitud aknaid
 #1 leht - ava
@@ -268,7 +337,7 @@ def open_window():
     
     close_window1()
     close_window2()
-    close_window3()
+    close_windowdebug()
     splash_picture.show()
     alustusnupp.show()
 
@@ -289,7 +358,7 @@ def open_window():
 def open_windowage():
     close_window1()
     close_window2()
-    close_window3()
+    close_windowdebug()
     windowage.show(wait=True)
     windowage.focus()
 
@@ -298,7 +367,7 @@ def open_window1():
     window1.show(wait=True)     #järkekord oluline
     windowage.hide()
     close_window2()
-    close_window3()
+    close_windowdebug()
 
 #4 leht - ava
 def open_window2():
@@ -306,8 +375,8 @@ def open_window2():
     #print(skoor_count, skoor_õigeid, skoor_valesid)
 
 #5 leht - ava
-def open_window3():
-    window3.show(wait=True)
+def open_windowdebug():
+    windowdebug.show(wait=True)
     #print(skoor_count, skoor_õigeid, skoor_valesid)
 
 #1 leht - sulge
@@ -329,8 +398,8 @@ def close_window2():
     window2.hide()
 
 #5 lisaleht vanuse jaoks
-def close_window3():
-    window3.hide()
+def close_windowdebug():
+    windowdebug.hide()
 
 #6 funktsioon mis peidab kõik lehed ja sulgeb programmi, kui anda mingi parameeter, siis exit-it ei tee
 def close_windows(quit=None):
@@ -338,7 +407,7 @@ def close_windows(quit=None):
     windowage.hide()
     window1.hide()
     window2.hide()
-    window3.hide()
+    windowdebug.hide()
     if quit is None:
         exit()
 
@@ -357,13 +426,14 @@ window1 = Window(app, title="Küsimusteleht", layout="auto", bg = "#7B4E4E")
 #Leht Küsimuste vahel tulemuste kuvamiseks
 window2 = Window(app, title="Skoori vaheleht", layout="auto", bg = "#7B4E4E")
 
-#Pole kasututses
-window3 = Window(app, title="Lõpuleht", layout="auto", bg = "#7B4E4E")
+#Debug window
+windowdebug = Window(app, title="Debug / start options", layout="auto", bg = "#7B4E4E")
 
 
 #et avaleht jääks kõige ette
 close_windows(1)
-app.show()
+#app.show()
+windowdebug.show()
 
 #Boxes
 
@@ -418,6 +488,13 @@ algusesse_button    = PushButton(window2, text="Tagasi algusesse", command=full_
 close_button6       = PushButton(window2, text="Sulge mäng", command=close_windows)
 #close_button7      = PushButton(window3, text="Sulge mäng", command=close_windows)
 
+full_beginning_button   = PushButton(windowdebug, text="Full 50 pieces of candy", command = full_candy_config)
+from_file_button        = PushButton(windowdebug, text="Start from file", command = read_candy_config)
+closedebug_button       = PushButton(windowdebug, text="close", command = close_windows)
+yes_button              = PushButton(windowdebug, text="jah", command = full_reset, visible=0)
+no_button               = PushButton(windowdebug, text="ei", command = adjust_position, visible=0)
+
+
 #text widgets
 
 disp_küsimus    = Message(window1.tk, text="Kui näed seda teksti, anna automaadi kantseldajale teada.", font=("Didot", 30), width=1600)
@@ -439,12 +516,21 @@ skoor_nr_text   = Text(skoor_box, text=mäng.skoor, size=60, align="bottom", fon
 valesid_nr_text = Text(valesid_box, text=mäng.valesid, size=60, align="bottom", font="Didot", color="black", grid= [2,0])
 vajuta_text     = Text(spacer_box2, text="Jätkamiseks vajuta mõnda nuppu", size=35, font="Didot", color="black")
 
+debug1_text = Text(windowdebug, text = "igno seda", visible = 0)
+debug2_text  = Text(windowdebug, text="Kas õige tasku on juba ees?", visible = 0)
+
 #TextBox widgets
 input_textbox   = TextBox(answer_name_box, align = "top")
 input_textbox.bg ="white"
 input_textbox.font = "Didot"
 input_textbox.text_size = 50
 input_textbox.hide()
+
+debug_textbox   = TextBox(windowdebug)
+debug_textbox.bg ="white"
+debug_textbox.font = "Didot"
+debug_textbox.text_size = 50
+debug_textbox.hide()
 
 #Picture widgets
 
