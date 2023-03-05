@@ -33,6 +33,7 @@ class Game:
     Q_POLL_PERIOD = 0.1 #kui tihti nupuvautus kontrollitakse, sekundites
     VALE_VASTUS = "Vale vastus!"
     ÕIGE_VASTUS = "Õige, tubli!"
+    TIMEOUT_VASTUS = "Liiga aeglane oled, loetud valeks"
 
 mäng = Game(0)
 
@@ -160,7 +161,7 @@ def läks():
 def kontrolli_vastust(vastus, num_vastus = None):
     
     #kuvab hariliku uue küsimuse nupu igal korral kui mängu pikkus pole veel teäidetud
-    uus_küsimus_button.show()
+    #uus_küsimus_button.show()
     algusesse_button.hide()
 
     #puhastb teksti sisu, et saaks kuvada uusi väärtusi
@@ -193,7 +194,9 @@ def kontrolli_vastust(vastus, num_vastus = None):
     #Küsimuse vastuse ootamise timeout
     elif vastus == 0:
         #Seda osa võiks vist täiendada
+        vastus_tulemus.append(mäng.TIMEOUT_VASTUS)        
         open_window2()
+        mäng.valesid += 1
     else:
         vastus_tulemus.append(mäng.VALE_VASTUS)
         open_window2()
@@ -207,13 +210,16 @@ def kontrolli_vastust(vastus, num_vastus = None):
 
     #v[vastus].text on valitud vastus, prindib selle silumiseks
     if num_vastus == None:
-        string = "v" + str(vastus) + ".text"
-        print("Valiti vastus:", eval(string))
+        if vastus == 0:
+            print("vastust ei valitud.")
+        else:
+            string = "v" + str(vastus) + ".text"
+            print("Valiti vastus:", eval(string))
 
     # kui mäng läbi saab kuvab lõpu nupu ja skoori
     if mäng.skoor >= mäng.mängu_pikkus:
         #Kuvab reseti alagatava nupu, et mängu uuesti algusest alustada
-        uus_küsimus_button.hide()
+        #uus_küsimus_button.hide()
         algusesse_button.show()
         vastus_tulemus.clear()
         vastus_tulemus.append("Mäng läbi. Kui olid tubli väljastab masin miskit.")
@@ -245,7 +251,7 @@ def kontrolli_vastust(vastus, num_vastus = None):
                 full_reset()
             
     
-    # ootab skoori ekraanin nupuvajutust, et kuvada järgmine küssa
+    # ootab skoori ekraanil nupuvajutust, et kuvada järgmine küssa
     window2.update()
     hw.reset_button()
     print("Sisendit oodates, et kuvada järgmine asi...")
@@ -372,6 +378,8 @@ def open_window1():
 #4 leht - ava
 def open_window2():
     window2.show(wait=True)
+    window2.update()
+    print("updating windoe 2")
     #print(skoor_count, skoor_õigeid, skoor_valesid)
 
 #5 leht - ava
@@ -437,18 +445,18 @@ windowdebug.show()
 
 #Boxes
 
-buttons_box =           Box(window1, width="fill", align="bottom", border=1, layout="grid")
-answer_name_box =       Box(window1, width="fill", align="bottom", border=1)#, layout="grid")
+buttons_box =           Box(window1, width="fill", align="bottom", border=0, layout="grid")
+answer_name_box =       Box(window1, width="fill", align="bottom", border=0)#, layout="grid")
 input_text_box =        Box(answer_name_box, width = "fill", height = "fill")#, grid = [0,0] )      #et see kuradi teksti sisestuslkast keskel püsiks
 input_text_box.hide()
-spacer_box1 =           Box(windowage, width ="fill", height=300, align="bottom", border=1)
+spacer_box1 =           Box(windowage, width ="fill", height=300, align="bottom", border=0)
 age_selection_box =     Box(windowage, width="fill", height=300, align="bottom", border=0, layout="grid")
-age_spacer_box =        Box(age_selection_box, width=170, grid=[0,0], border=0) #vanuse valiku nuppude tsentrisse paigutamise jaoks
+age_spacer_box =        Box(age_selection_box, width=440, grid=[0,0], border=0) #vanuse valiku nuppude tsentrisse paigutamise jaoks
 age_description_box =   Box(windowage, width="fill", height=100, align="bottom", border=0)
 #age_button_description_box = Box(age_spacer_box)
 
-spacer_box2 =           Box(window2, width = 1000, height=200, align="bottom", border=1)
-skoor_üldine_box =      Box(window2, width = "fill", height = 600, align="bottom", border=1)
+spacer_box2 =           Box(window2, width = 1000, height=200, align="bottom", border=0)
+skoor_üldine_box =      Box(window2, width = "fill", height = 600, align="bottom", border=0)
 skoor_spacer_box =      Box(skoor_üldine_box, width = 200, height = "fill", align="left", border=0)
 valesid_box =           Box(skoor_üldine_box, width = 1000, height=200, align="bottom", border=0, layout="grid")
 õigeid_box =            Box(skoor_üldine_box, width = 1000, height=200, align="bottom", border=0, layout="grid")
@@ -457,7 +465,7 @@ skoor_box =             Box(skoor_üldine_box, width = 1000, height=200, align="
 
 #PushButton widgets
 
-alustusnupp =   PushButton(app, command = läks, width = 20, height = 5, align = "bottom", text ="Vajuta, et alustada")
+alustusnupp =   PushButton(app, command = läks, width = 40, height = 5, align = "bottom", text ="Vajuta mõnda nuppu, et alustada")
 alustusnupp.text_size = 30
 nooruk =        PushButton(age_selection_box, command = start, args = [1], width = 20, align= "left", height = 3, text ="<=12", visible=0, grid= [1,0])
 nooruk.text_size = 30
@@ -466,23 +474,23 @@ keskealine.text_size = 30
 vanur =         PushButton(age_selection_box, command = start, args = [3], width = 20, align= "left", height = 3, text ="ABBga seotud", visible=0, grid= [3,0])
 vanur.text_size = 30
 
-v1 =            PushButton(buttons_box, command = kontrolli_vastust, args = [1], width = 18, grid= [0,0], height = 3, visible=0)
+v1 =            PushButton(buttons_box, command = kontrolli_vastust, args = [1], width = 18, grid= [0,0], height = 4, visible=0)
 v1.text_size = 30
 v1.tk.config(wraplength=440)
-v2 =            PushButton(buttons_box, command = kontrolli_vastust, args = [2], width = 17, grid= [1,0], height = 3, visible=0)
+v2 =            PushButton(buttons_box, command = kontrolli_vastust, args = [2], width = 17, grid= [1,0], height = 4, visible=0)
 v2.text_size = 30
 v2.tk.config(wraplength=440)
-v3 =            PushButton(buttons_box, command = kontrolli_vastust, args = [3], width = 17, grid= [2,0], height = 3, visible=0)
+v3 =            PushButton(buttons_box, command = kontrolli_vastust, args = [3], width = 17, grid= [2,0], height = 4, visible=0)
 v3.text_size = 30
 v3.tk.config(wraplength=440)
-v4 =            PushButton(buttons_box, command = kontrolli_vastust, args = [4], width = 18, grid= [3,0], height = 3, visible=0)
+v4 =            PushButton(buttons_box, command = kontrolli_vastust, args = [4], width = 18, grid= [3,0], height = 4, visible=0)
 v4.text_size = 30
 v4.tk.config(wraplength=440)
 
 close_button1       = PushButton(app, text="Sulge leht 1", command=close_windows)
 close_button2       = PushButton(windowage, text="Sulge leht 2", command=close_windows)
 close_button3       = PushButton(window1, text="Sulge leht 3", command=close_windows)
-uus_küsimus_button  = PushButton(window2, text="Järgmine küsimus, palun", command=start)
+#uus_küsimus_button  = PushButton(window2, text="Järgmine küsimus, palun", command=start, )
 algusesse_button    = PushButton(window2, text="Tagasi algusesse", command=full_reset, visible=0)
 #close_button5      = PushButton(window3, text="Tagasi algusesse", command=full_reset)
 close_button6       = PushButton(window2, text="Sulge mäng", command=close_windows)
@@ -502,8 +510,8 @@ disp_küsimus.pack()
 tere_tulemast   = Text(app, text="Tere tulemast unikaalse müügiautomaadi juurde!", size=50, align = "top", font="Didot", color="black")
 tekst_1         = Text(windowage, text="Vali sobiv küsimuste grupp:", align = "top", size=60, font="Didot", color="black")
 tekst_vanus_selgitus = Text(windowage, text="Kusimused on enamjaolt inseneeria ja reaalteadustega seotud ;)", align = "top", size=30, font="Didot", color="black")
-age_description_text = Text(age_description_box, text="Olen nooruk!                Keskiga juba käes!              Vanaks jäänud...", align = "top", size=30, font="Didot", color="black")
-age_buton_description_text = Text(spacer_box1, text="Nupp1                           Nupp 2                          Nupp 3", align = "top", size=30, font="Didot", color="black")
+age_description_text = Text(age_description_box, text="   Küsimused ilma kindla kondikavata        ABB tegemistega seotud küsimused", align = "top", size=30, font="Didot", color="black")
+age_buton_description_text = Text(spacer_box1, text="  Nupp 2                          Nupp 3", align = "top", size=30, font="Didot", color="black")
 vastus_tulemus       = Text(window2, text="Initilize", size=60, align = "top", font="Didot", color="black")
 
 a_vastus        = Text(answer_name_box, text="A:               B:               C:               D:",size=60, font="Didot", color="#3F3E3E", align = "top")
