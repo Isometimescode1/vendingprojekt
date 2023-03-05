@@ -106,18 +106,22 @@ pi.set_mode(RETRACT, pigpio.OUTPUT)
 
 def actuate_cycle():
     # push out
+    print("actuator pushing")
     pi.write(PUSH, 1)
     sleep(4)
     pi.write(PUSH, 0)
     # wait a bit to give ralays some time
     sleep(1)
     # retract the actuator
+    print("actuator retracting")
     pi.write(RETRACT, 1)
     sleep(4)
     pi.write(RETRACT, 0)
 
     #-1 komm
+    print("Decresing candy counter by 1")
     ratas.candy_remaining -= 1
+    print("actuator done")
 
 def actuate_push():
     # push out
