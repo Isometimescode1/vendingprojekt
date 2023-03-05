@@ -406,7 +406,7 @@ class Wheel:
         self.pockets = 50
         self.last_ejected = 0
         self.candy_remaining = 50
-        self.current_pocket = 1
+        self.current_pocket = 0     # 0 = mängu algus ja ühtegi kommi pole väljastatud
         self.place_in_sequence = 1
 
     rotationSequence = {
@@ -464,6 +464,10 @@ def advance_to(x):
 # This succesfully and in a balanced fashin manages to dispence 48 pieces of candy
 # Candy in pockets 50 and 25 remain and need to be extraced manually
 def balancedRotate():
+    if ratas.current_pocket == 0:
+        ratas.current_pocket = 1
+        return 0
+
     if ratas.candy_remaining > 2:
         print("PIS ", ratas.place_in_sequence)
         match ratas.place_in_sequence:
