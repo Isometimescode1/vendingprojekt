@@ -21,7 +21,7 @@ class Game:
       self.õigeid = 0
       self.valesid = 0
       self.õige_nupp = 0
-      self.mängu_pikkus = 5
+      self.mängu_pikkus = 3
       self.valitud_str = "Error: Koogel moogel!"
       self.digit = 0
       self.full_input = 0
@@ -127,8 +127,8 @@ def too_küsimus(vanus):
 def läks():
     open_windowage()        #järjekord oluline
     close_window()
-    alustusnupp.hide()
-    splash_picture.hide()
+    #alustusnupp.hide()
+    #splash_picture.hide()
     #nooruk.show()    #for ABB spec
     keskealine.show()
     vanur.show()
@@ -162,7 +162,7 @@ def kontrolli_vastust(vastus, num_vastus = None):
     
     #kuvab hariliku uue küsimuse nupu igal korral kui mängu pikkus pole veel teäidetud
     #uus_küsimus_button.show()
-    algusesse_button.hide()
+    #lgusesse_button.hide()
 
     #puhastb teksti sisu, et saaks kuvada uusi väärtusi
     vastus_tulemus.clear()
@@ -236,7 +236,8 @@ def kontrolli_vastust(vastus, num_vastus = None):
             sleep(1)
             
             # kuva jätkamise nupp
-            vajuta_text.show()
+            #vajuta_text.show()
+            full_reset()
         else:
             print("ei saa auhinda")
             window2.update()
@@ -339,6 +340,7 @@ def adjust_position():
 #1 leht - ava
 def open_window(): 
     app.show()
+    app.update()
     app.focus()
     
     close_window1()
@@ -348,7 +350,6 @@ def open_window():
     alustusnupp.show()
 
     # ootame mingit sisendit, et saaks alustada
-    app.update()
     hw.reset_button()
     print("Sisendit oodates, et küsida vanust...")
     alustus_input = 0
