@@ -36,7 +36,7 @@ class Game:
 
 mäng = Game(0)
 
-#alustab mängu, vaja palju asju juurde lisada
+#alustab mängu?
 
 def start(age=None):
     
@@ -128,7 +128,7 @@ def läks():
     close_window()
     alustusnupp.hide()
     splash_picture.hide()
-    nooruk.show()
+    #nooruk.show()    #for ABB spec
     keskealine.show()
     vanur.show()
 
@@ -461,9 +461,9 @@ alustusnupp =   PushButton(app, command = läks, width = 20, height = 5, align =
 alustusnupp.text_size = 30
 nooruk =        PushButton(age_selection_box, command = start, args = [1], width = 20, align= "left", height = 3, text ="<=12", visible=0, grid= [1,0])
 nooruk.text_size = 30
-keskealine =    PushButton(age_selection_box, command = start, args = [2], width = 20, align= "left", height = 3, text ="13-18", visible=0, grid= [2,0])
+keskealine =    PushButton(age_selection_box, command = start, args = [2], width = 20, align= "left", height = 3, text ="Vaaria", visible=0, grid= [2,0])
 keskealine.text_size = 30
-vanur =         PushButton(age_selection_box, command = start, args = [3], width = 20, align= "left", height = 3, text =">=19", visible=0, grid= [3,0])
+vanur =         PushButton(age_selection_box, command = start, args = [3], width = 20, align= "left", height = 3, text ="ABBga seotud", visible=0, grid= [3,0])
 vanur.text_size = 30
 
 v1 =            PushButton(buttons_box, command = kontrolli_vastust, args = [1], width = 18, grid= [0,0], height = 3, visible=0)
@@ -500,8 +500,8 @@ no_button               = PushButton(windowdebug, text="ei", command = adjust_po
 disp_küsimus    = Message(window1.tk, text="Kui näed seda teksti, anna automaadi kantseldajale teada.", font=("Didot", 30), width=1600)
 disp_küsimus.pack()
 tere_tulemast   = Text(app, text="Tere tulemast unikaalse müügiautomaadi juurde!", size=50, align = "top", font="Didot", color="black")
-tekst_1         = Text(windowage, text="Vali sobiv vanusegrupp:", align = "top", size=60, font="Didot", color="black")
-tekst_vanus_selgitus = Text(windowage, text="Kusimused on jaotatud vanuste alusel, et anda kõigile võrdne võimalus ;)", align = "top", size=30, font="Didot", color="black")
+tekst_1         = Text(windowage, text="Vali sobiv küsimuste grupp:", align = "top", size=60, font="Didot", color="black")
+tekst_vanus_selgitus = Text(windowage, text="Kusimused on enamjaolt inseneeria ja reaalteadustega seotud ;)", align = "top", size=30, font="Didot", color="black")
 age_description_text = Text(age_description_box, text="Olen nooruk!                Keskiga juba käes!              Vanaks jäänud...", align = "top", size=30, font="Didot", color="black")
 age_buton_description_text = Text(spacer_box1, text="Nupp1                           Nupp 2                          Nupp 3", align = "top", size=30, font="Didot", color="black")
 vastus_tulemus       = Text(window2, text="Initilize", size=60, align = "top", font="Didot", color="black")
