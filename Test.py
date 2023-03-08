@@ -233,6 +233,8 @@ def kontrolli_vastust(vastus, num_vastus = None):
             hw.balancedRotate()
             sleep(1)
             hw.actuate_cycle()
+            mäng.kommi_olukord[hw.ratas.current_pocket] = 0
+            update_logfile()
             sleep(1)
             
             # kuva jätkamise nupp
@@ -284,6 +286,14 @@ def full_candy_config():
 
     print("logifail uuendatud (50)")
     full_reset()
+
+# kirjutab kommi olukorra faili ja paneb praeguse tasku numbri faili viimasele kohale
+def update_logfile():
+    with open("log_file.txt", "w") as log:
+        mäng.kommi_olukord[hw.ratas.pockets] = hw.ratas.current_pocket
+        for line in mäng.kommi_olukord:
+            log.write(f"{line}\n")
+
 
 def read_candy_config():
     log = open("log_file.txt", "r")
