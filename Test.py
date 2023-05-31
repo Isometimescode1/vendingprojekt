@@ -129,9 +129,9 @@ def läks():
     close_window()
     #alustusnupp.hide()
     #splash_picture.hide()
-    #nooruk.show()    #for ABB spec
-    keskealine.show()
-    vanur.show()
+    #nooruk.show()      # Not shown for ABB spec
+    keskealine.show()   # Varia küsimused for ABB spec
+    vanur.show()        # ABB-ga seotud küsimused
 
     # ootame mingit sisendit, et saaks alustada
     windowage.update()
@@ -478,6 +478,8 @@ skoor_box =             Box(skoor_üldine_box, width = 1000, height=200, align="
 
 alustusnupp =   PushButton(app, command = läks, width = 40, height = 5, align = "bottom", text ="Vajuta mõnda nuppu, et alustada")
 alustusnupp.text_size = 30
+
+#Küsimuste kategooriate valiku nupud
 nooruk =        PushButton(age_selection_box, command = start, args = [1], width = 20, align= "left", height = 3, text ="<=12", visible=0, grid= [1,0])
 nooruk.text_size = 30
 keskealine =    PushButton(age_selection_box, command = start, args = [2], width = 20, align= "left", height = 3, text ="Vaaria", visible=0, grid= [2,0])
